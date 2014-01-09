@@ -1,0 +1,21 @@
+Name:       ACPC
+Version:    1.0
+Authors:    Francois Berenger
+License:    BSD
+Synopsis:   Chemoinformatics tool for ligand-based virtual screening
+obuild-ver: 1
+
+Executable acpc
+  Path:         .
+  BuildDepends: batteries, dolog, vector3, parmap
+  MainIs:       ac.ml
+
+Executable acpc_big
+  Path:         .
+  BuildDepends: batteries, dolog, vector3
+  MainIs:       big_ac.ml
+
+Executable acpc_mol2tool
+  Path:         .
+  BuildDepends: batteries, dolog, vector3
+  MainIs:       mol2_tool.ml
