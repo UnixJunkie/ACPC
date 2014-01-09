@@ -57,29 +57,29 @@ $ acpc_mol2tool some_molecules.mol2
 Get some help
 -------------
 
-$ acpc -h
-  -cmp {CC|Tani|Tref|Tdb} LBAC+/- comparison method (default: CC)
-  -htq                    list molecules scoring Higher Than the Query with itself
-  -q query.mol2           query (incompatible with -qf)
-  -qf f                   file containing a list of mol2 files (incompatible with -q)
-  -db db.mol2             database
-  -dx float               X axis discretization (default: 0.005000)
-  -v                      output intermediate results
-  -nopp                   don't rm duplicate molecules
-  -np nprocs              max CPUs to use (default: 1)
-  -ng                     no gnuplot
-  -nr                     no ROC curve (also sets -ng)
-  -o output.mol2          output file (also requires -top, incompatible with -qf)
-  -top N                  nb. best scoring molecules to output (also requires -o)
-  -help                   Display this list of options
-  --help                  Display this list of options
+    $ acpc -h
+      -cmp {CC|Tani|Tref|Tdb} LBAC+/- comparison method (default: CC)
+      -htq                    list molecules scoring Higher Than the Query with itself
+      -q query.mol2           query (incompatible with -qf)
+      -qf f                   file containing a list of mol2 files (incompatible with -q)
+      -db db.mol2             database
+      -dx float               X axis discretization (default: 0.005000)
+      -v                      output intermediate results
+      -nopp                   don't rm duplicate molecules
+      -np nprocs              max CPUs to use (default: 1)
+      -ng                     no gnuplot
+      -nr                     no ROC curve (also sets -ng)
+      -o output.mol2          output file (also requires -top, incompatible with -qf)
+      -top N                  nb. best scoring molecules to output (also requires -o)
+      -help                   Display this list of options
+      --help                  Display this list of options
 
-# acpc_big -h
-  -q query.mol2 query
-  -db db.mol2   database
-  -dx float     X axis discretization (default: 0.005000)
-  -help         Display this list of options
-  --help        Display this list of options
+    # acpc_big -h
+      -q query.mol2 query
+      -db db.mol2   database
+      -dx float     X axis discretization (default: 0.005000)
+      -help         Display this list of options
+      --help        Display this list of options
 
 WARNING
 -------
