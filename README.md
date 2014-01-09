@@ -13,7 +13,7 @@ the OCaml package manager (OPAM). Cf. http://opam.ocaml.org/
 Once this is done, you can automatically install ACPC
 with the following command:
 
-$ opam install acpc
+    $ opam install acpc
 
 Recommended usage (protocol)
 ----------------------------
@@ -40,19 +40,19 @@ Examples
 
 1) one query on a small database
 
-$ acpc -q query.mol2 -db database.mol2
+    $ acpc -q query.mol2 -db database.mol2
 
 2) same but storing the top 10 molecules
 
-$ acpc -q query.mol2 -db database.mol2 -top 10 -o ten_best.mol2
+    $ acpc -q query.mol2 -db database.mol2 -top 10 -o ten_best.mol2
 
 3) one query on a large database
 
-$ acpc_big -q query.mol2 -db database.mol2
+    $ acpc_big -q query.mol2 -db database.mol2
 
 4) separate each molecule from a mol2 file into separate files
 
-$ acpc_mol2tool some_molecules.mol2
+    $ acpc_mol2tool some_molecules.mol2
 
 Get some help
 -------------
