@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: 044e352d3d37c891e7bc417461956d08)
+# DO NOT EDIT (digest: 9287541d1c4c6a9fe398b16cfae96576)
 # Ignore VCS directories, you can use the same kind of rule outside
 # OASIS_START/STOP if you want to exclude directories that contains
 # useless stuff for the build process
@@ -14,20 +14,20 @@
 "_darcs": -traverse
 "_darcs": not_hygienic
 # Executable acpc
-"ac.byte": pkg_batteries
-"ac.byte": pkg_dolog
-"ac.byte": pkg_vector3
-"ac.byte": pkg_parmap
+<ac.{native,byte}>: pkg_batteries
+<ac.{native,byte}>: pkg_dolog
+<ac.{native,byte}>: pkg_vector3
+<ac.{native,byte}>: pkg_parmap
 # Executable acpc_big
-"big_ac.byte": pkg_batteries
-"big_ac.byte": pkg_dolog
-"big_ac.byte": pkg_vector3
-"big_ac.byte": pkg_parmap
+<big_ac.{native,byte}>: pkg_batteries
+<big_ac.{native,byte}>: pkg_dolog
+<big_ac.{native,byte}>: pkg_vector3
+<big_ac.{native,byte}>: pkg_parmap
 # Executable acpc_mol2tool
-"mol2_tool.byte": pkg_batteries
-"mol2_tool.byte": pkg_dolog
-"mol2_tool.byte": pkg_vector3
-"mol2_tool.byte": pkg_parmap
+<mol2_tool.{native,byte}>: pkg_batteries
+<mol2_tool.{native,byte}>: pkg_dolog
+<mol2_tool.{native,byte}>: pkg_vector3
+<mol2_tool.{native,byte}>: pkg_parmap
 <*.ml{,i}>: pkg_batteries
 <*.ml{,i}>: pkg_dolog
 <*.ml{,i}>: pkg_vector3
