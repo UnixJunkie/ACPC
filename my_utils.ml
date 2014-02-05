@@ -540,17 +540,15 @@ let tanimoto_coeff xs ys =
   let xy_sum, x2_sum, y2_sum = tanimoto_et_al xs ys in
   xy_sum /. (x2_sum +. y2_sum -. xy_sum)
 
-(* formula comes from doi:10.1016/j.jmgm.2008.04.003 
-   but was corrected *)
+(* formula comes from doi:10.1016/j.jmgm.2008.04.003 *)
 let tversky_ref xs ys =
   let xy_sum, x2_sum, _y2_sum = tanimoto_et_al xs ys in
-  xy_sum /. (x2_sum -. xy_sum)
+  xy_sum /. x2_sum
 
-(* formula comes from doi:10.1016/j.jmgm.2008.04.003
-   but was corrected *)
+(* formula comes from doi:10.1016/j.jmgm.2008.04.003 *)
 let tversky_db xs ys =
   let xy_sum, _x2_sum, y2_sum = tanimoto_et_al xs ys in
-  xy_sum /. (y2_sum -. xy_sum)
+  xy_sum /. y2_sum
 
 (* initialize the RNG using system time in ms as the seed (returned) *)
 let init_RNG () =
