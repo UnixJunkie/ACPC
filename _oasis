@@ -4,23 +4,25 @@ Version:     1.1
 Synopsis:    Chemoinformatics tool for ligand-based virtual screening
 Authors:     Francois Berenger
 License:     BSD3
-Plugins:     META (0.3)
 BuildTools:  ocamlbuild
 
 Executable acpc
   Path:         .
   Install:      true
   mainIs:       ac.ml
+  CompiledObject: best
   buildDepends: batteries, dolog, vector3, parmap
 
 Executable acpc_big
   Path:         .
   Install:      true
   mainIs:       big_ac.ml
+  CompiledObject: best
   buildDepends: batteries, dolog, vector3, parmap
 
 Executable acpc_mol2tool
   Path:         .
   Install:      true
   mainIs:       mol2_tool.ml
+  CompiledObject: best
   buildDepends: batteries, dolog, vector3, parmap
