@@ -75,7 +75,7 @@ let read_molecules fn =
       (* read from a regular MOL2 file *)
       let _ =
         if not (F.check_suffix fn ".mol2")
-        then Log.warnf "%s not a .mol2 file" fn;
+        then Log.warn "%s not a .mol2 file" fn;
       in
       read_one_molecule
   in
@@ -86,15 +86,15 @@ let read_molecules fn =
         (fun () -> read_one nb_molecules input)
     in
     assert (exn = End_of_file);
-    Log.infof "%d molecule(s) in %s" !nb_molecules fn;
+    Log.info "%d molecule(s) in %s" !nb_molecules fn;
     molecules
   )
 
 (* store all lines of all molecules, for later reference by index *)
 let read_raw_molecules fn =
-  Log.infof "indexing molecules from %s..." fn;
+  Log.info "indexing molecules from %s..." fn;
   if not (F.check_suffix fn ".mol2") then (
-    Log.warn (lazy (sprintf "%s not a .mol2 file" fn))
+    Log.warn "%s not a .mol2 file" fn
   );
   let all_lines = MU.string_list_of_file fn in
   let all_molecules =
@@ -107,5 +107,5 @@ let read_raw_molecules fn =
   let nb_molecules = L.length all_molecules in
   (* put back the header of each molecule, removed by BatList.nsplit *)
   let res = A.of_list (L.map (fun m -> mol_start_str :: m) all_molecules) in
-  Log.infof "%d molecule(s) in %s" nb_molecules fn;
+  Log.info "%d molecule(s) in %s" nb_molecules fn;
   res

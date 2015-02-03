@@ -38,7 +38,7 @@ let main () =
     failwith "use -if XOR -rf"
   ;
   if !ratio <= 0.0 || !ratio > 1.0 then (
-    Log.fatalf "option -p x: x is out of range";
+    Log.fatal "option -p x: x is out of range";
     exit 1
   );
   let files =

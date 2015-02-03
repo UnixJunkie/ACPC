@@ -36,12 +36,12 @@ let get_rot_bonds fn =
         try
           Scanf.sscanf line "ROT_BOND %d %d" (fun i j -> (i, j))
         with exn ->
-          Log.errorf "in file %s, could not parse line %s" aux_fn line;
+          Log.error "in file %s, could not parse line %s" aux_fn line;
           raise exn
       )
       bonds
   | _ ->
-    Log.fatalf "could not read rotatable bonds from %s" aux_fn;
+    Log.fatal "could not read rotatable bonds from %s" aux_fn;
     exit 1
 
 (* returns (molecule, molecular_graph) of the molecule in the given MOL2 file

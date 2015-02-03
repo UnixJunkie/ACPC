@@ -41,7 +41,7 @@ let do_consensus rank_files policy_str verbose ratio =
   let policy = policy_of_string policy_str in
   match rank_files with
     | [] -> 
-      Log.fatalf "Consensus.do_consensus: rank_files = []";
+      Log.fatal "Consensus.do_consensus: rank_files = []";
       exit 1
     | rf1 :: rfs ->
       let name_ranks_1 = name_ranks_of_file rf1 in

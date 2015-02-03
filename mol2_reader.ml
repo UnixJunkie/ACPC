@@ -18,7 +18,7 @@ let rec get_molecule_names acc = function
     else
       get_molecule_names acc rest
   | _ ->
-    Log.info (lazy (sprintf "%d molecule(s) found" (L.length acc)));
+    Log.info "%d molecule(s) found" (L.length acc);
     L.rev acc
 
 let get_molecules_with_names lines =
@@ -29,8 +29,7 @@ let get_molecules_with_names lines =
          (fun l -> Str.string_match Mol2_parser.mol_start_tag l 0)
          lines)
   in
-  Log.info (lazy (
-    sprintf "%d molecule(s) found" (L.length molecules_without_start_tags)));
+  Log.info "%d molecule(s) found" (L.length molecules_without_start_tags);
   L.map
     (fun l ->
       (* extract the name *)
@@ -46,8 +45,7 @@ let main () =
 
   let argc = A.length Sys.argv in
   if argc <> 2 && argc <> 3 then (
-    Log.fatal (lazy (
-      sprintf "\nusage: %s input.mol2 [-uniq|-stddev]" Sys.argv.(0)));
+    Log.fatal "\nusage: %s input.mol2 [-uniq|-stddev]" Sys.argv.(0);
     exit 1
   );
 
@@ -76,10 +74,10 @@ let main () =
            let _ = Hashtbl.add smiles smile () in
            L.iter (printf "%s\n") mol_lines
          else
-           Log.warn (lazy (sprintf "skipped %s" mol_name))
+           Log.warn "skipped %s" mol_name
       )
       named_molecules;
-    Log.info (lazy (sprintf "%d molecule(s) written out" (HT.length smiles)))
+    Log.info "%d molecule(s) written out" (HT.length smiles)
   else
     let mols = Mol2_parser.read_molecules input in
     L.iter

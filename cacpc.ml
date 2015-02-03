@@ -57,25 +57,25 @@ let main () =
     (sprintf "Example: %s -q query.mol2 -db database.mol2[.bin]\n"
        Sys.argv.(0));
   if (!query_fn = "" || !database_fn = "") then (
-    Log.fatalf "-q and -db are all mandatory";
+    Log.fatal "-q and -db are all mandatory";
     exit 1
   );
   if !top_N <> not_set_int then (
     if !out_fn = "" then (
-      Log.fatalf "-top implies -o";
+      Log.fatal "-top implies -o";
       exit 1
     );
   );
   if !out_fn <> "" then (
     if !top_N = not_set_int then (
-      Log.fatalf "-o but no -top";
+      Log.fatal "-o but no -top";
       exit 1
     );
   );
   let feature = Feat.of_filename !query_fn in
   let db_feature = Feat.of_filename !database_fn in
   if feature <> db_feature then (
-    Log.fatalf "query and database feature don't match: %s %s"
+    Log.fatal "query and database feature don't match: %s %s"
       !query_fn !database_fn;
     exit 1
   );
@@ -87,21 +87,21 @@ let main () =
       [AC.read_query_molecule feature !query_fn]
     else (
       let rot_bonds = MolG.get_rot_bonds !query_fn in
-      Log.infof "found %d RBNs" (L.length rot_bonds);
+      Log.info "found %d RBNs" (L.length rot_bonds);
       let rot_bond_atoms, fragments = MolG.cut_rot_bonds !query_fn in
-      Log.infof "found %d fragments" (L.length fragments);
+      Log.info "found %d fragments" (L.length fragments);
       (* dump fragments and rot. bonds out for verification *)
       let rot_bonds_bild_fn =
         MU.filename_with_different_extension !query_fn ".mol2" "_bonds.bld"
       in
       Mol.rot_bonds_to_bild_file rot_bond_atoms rot_bonds_bild_fn;
-      Log.infof "rot. bonds: %s" rot_bonds_bild_fn;
+      Log.info "rot. bonds: %s" rot_bonds_bild_fn;
       let current_color = ref Color.Red in
       L.iteri
         (fun i m ->
           let bild_file =
             Fn.concat (Fn.dirname !query_fn) (sprintf "%s.bld" m.name) in
-          Log.infof "fragment %d: %s" i bild_file;
+          Log.info "fragment %d: %s" i bild_file;
           Mol.to_bild_file m !current_color bild_file;
           current_color := Color.next !current_color
         )
@@ -120,7 +120,7 @@ let main () =
     if !post_filter then
       ROC.unique scores
     else (
-      Log.warnf "not removing duplicated molecules";
+      Log.warn "not removing duplicated molecules";
       scores
     )
   in
@@ -128,7 +128,7 @@ let main () =
   let elapsed_time = stop_time -. start_time in
     (* we output speed before doing the AUC calculation
        because AUC is an optional post processing step *)
-  Log.infof "speed: %.2f molecules/s"
+  Log.info "speed: %.2f molecules/s"
     ((float_of_int !nb_molecules) /. elapsed_time);
   let initial_query_auc = ROC.auc score_labels in
   let enr_rate = ref nan in
@@ -139,7 +139,7 @@ let main () =
     in
     enr_rate := er
   );
-  Log.infof "q: %s db: %s a: %.1f AUC: %.3f ER@%.2f: %.2f"
+  Log.info "q: %s db: %s a: %.1f AUC: %.3f ER@%.2f: %.2f"
     !query_fn
     !database_fn
     !a
@@ -174,11 +174,11 @@ let main () =
       in
       assert(nb_AUCs = L.length query_mol.atoms)
     | _ ->
-      Log.fatalf "you are not supposed to scan fragments";
+      Log.fatal "you are not supposed to scan fragments";
       exit 1
   );
   if !top_N <> not_set_int && !out_fn <> "" then (
-    Log.infof "writing top %d molecules to %s..." !top_N !out_fn;
+    Log.info "writing top %d molecules to %s..." !top_N !out_fn;
     (* put all molecules in a table *)
     let indexed_molecules =
       (match feature with

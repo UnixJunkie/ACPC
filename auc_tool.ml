@@ -41,11 +41,11 @@ let main () =
     (sprintf "Example:\n%s -i query.mol2.scores" Sys.argv.(0));
   (* check options *)
   if !input_fn = "" then (
-    Log.fatalf "-i is mandatory";
+    Log.fatal "-i is mandatory";
     exit 1
   );
   if (!ratio <= 0.0) || (!ratio > 1.0) then (
-    Log.fatalf "option -p x: x is out of range";
+    Log.fatal "option -p x: x is out of range";
     exit 1
   );
   let sscanf =
@@ -57,7 +57,7 @@ let main () =
       if S.ends_with !input_fn ".scores" then
         scores_sscanf
       else (
-        Log.fatalf "auc_tool.ml: %s neither a .scores nor a .score-label"
+        Log.fatal "auc_tool.ml: %s neither a .scores nor a .score-label"
           !input_fn;
         exit 1
       )

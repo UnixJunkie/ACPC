@@ -105,7 +105,7 @@ let read_mol2_file f =
 let explode input_f =
   let molecules = read_mol2_file    input_f in
   let out_dir   = Fn.chop_extension input_f in
-  Log.info (lazy (sprintf "molecules in %s: %d" input_f (L.length molecules)));
+  Log.info "molecules in %s: %d" input_f (L.length molecules);
   L.mapi
     (fun j (m, m_name) ->
       let new_dir  = sprintf "%s_%07d" out_dir (j + 1) in
@@ -145,15 +145,15 @@ let main () =
   Arg.parse cmd_line ignore
     (sprintf "Example:\n%s -i database.mol2" Sys.argv.(0));
   if !input_fn = "" then (
-    Log.fatal (lazy ("-i some_file.[mol2|bin] is mandatory"));
+    Log.fatal "-i some_file.[mol2|bin] is mandatory";
     exit 1
   );
   MU.enforce_any_file_extension !input_fn ["mol2"];
   (* "explode" the file *)
   let new_files = explode !input_fn in
-  Log.info (lazy "Files created:");
+  Log.info "Files created:";
   L.iter
-    (fun (fn, _m_name) -> Log.info (lazy fn))
+    (fun (fn, _m_name) -> Log.info "%s" fn)
     new_files
 ;;
 

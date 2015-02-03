@@ -44,7 +44,8 @@ let read_scores_file fn =
               (name, score, index, label)
            )
         with exn ->
-          Log.fatalf "scorer.ml: read_scores_file %s: couldn't parse %s" fn line;
+          Log.fatal "scorer.ml: read_scores_file %s: couldn't parse %s"
+            fn line;
           raise exn
       )
       lines
@@ -104,7 +105,7 @@ let main () =
 
   if argc <> 8 then (
     (*        0  1           2          3         4      5     6    7 *)
-    Log.fatalf
+    Log.fatal
       "usage: %s mol2_scores pqr_scores pl_scores w_mol2 w_pqr w_pl scores_out_file"
       Sys.argv.(0)
     ;

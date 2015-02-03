@@ -24,11 +24,11 @@ let main () =
     (sprintf "Example:\n%s -i query.mol2.scores" Sys.argv.(0));
   (* check options *)
   if !input_fn = "" then (
-    Log.fatalf "-i is mandatory";
+    Log.fatal "-i is mandatory";
     exit 1
   );
   if (!ratio <= 0.0) || (!ratio > 1.0) then (
-    Log.fatalf "option -p x: x is out of range";
+    Log.fatal "option -p x: x is out of range";
     exit 1
   );
   MU.enforce_any_file_extension !input_fn ["scores"];
@@ -54,7 +54,7 @@ let main () =
   let top_n, top_actives_rate, rand_actives_rate, enr_rate =
     ROC.enr_rate !ratio score_labels
   in
-  Log.infof "%s p: %.2f n: %d topAR: %.2f randAR: %.2f ER: %.2f"
+  Log.info "%s p: %.2f n: %d topAR: %.2f randAR: %.2f ER: %.2f"
     !input_fn !ratio top_n top_actives_rate rand_actives_rate enr_rate
 ;;
 

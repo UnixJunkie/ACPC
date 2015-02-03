@@ -78,7 +78,7 @@ let read_one_molecule counter input =
    returns: [(name, [atoms]); ...] *)
 let read_molecules fn =
   if not (F.check_suffix fn ".pl")
-  then Log.warnf "%s not a .pl file" fn;
+  then Log.warn "%s not a .pl file" fn;
   let nb_molecules = ref 0 in
   let molecules, _eof =
     MU.with_in_file fn (fun input ->
@@ -87,5 +87,5 @@ let read_molecules fn =
       )
     )
   in
-  Log.infof "%d molecule(s) in %s" !nb_molecules fn;
+  Log.info "%d molecule(s) in %s" !nb_molecules fn;
   molecules

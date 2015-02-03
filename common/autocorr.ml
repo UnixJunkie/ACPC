@@ -63,7 +63,7 @@ let try_counting_molecules db_fn =
       | Feat.LogP -> (* a PL file *)
         "egrep -c '^MOL ' " ^ db_fn
     in
-    Log.infof "running:\n%s" cmd_str;
+    Log.info "running:\n%s" cmd_str;
     let cmd_out = S.strip (MU.get_command_output cmd_str) in
     Some (Int.of_string cmd_out)
 
@@ -89,8 +89,8 @@ let atom_scan feature initial_query_auc (query_fn, query_mol) scan_out_fn query_
   (* do_query feature cmp_f false (query_fn, query_mol)
      !dx db_kdes !post_filter !db_file false true false 0 "" *)
   let deltas = L.map (fun auc -> auc -. initial_query_auc) aucs in
-  Log.infof "to look at the result type:\n\
-             chimera %s %s" query_fn bild_fn;
+  Log.info "to look at the result type:\n\
+            chimera %s %s" query_fn bild_fn;
   let atom_and_deltas = L.combine query_mol.atoms deltas in
   let interesting_atoms =
     L.map

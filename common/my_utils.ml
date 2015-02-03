@@ -819,7 +819,7 @@ exception Command_failed of string;;
    ~debug  -> dry-run only
    ~strict -> raise (Command_failed msg) on non 0 exit status of the command *)
 let run_command ?(debug = false) ?(strict = true) cmd =
-  Log.infof "running:\n%s" cmd;
+  Log.info "running:\n%s" cmd;
   if not debug then
     let ret_code = Sys.command cmd in
     (* P.printf "ret_code: %d\n%!" ret_code; *)
@@ -868,7 +868,7 @@ let get_nprocs () =
   (* WARNING: Linux-specific and unportable code *)
   let out = get_command_output "egrep -c '^processor' /proc/cpuinfo" in
   let res = Scanf.sscanf out "%d" (fun x -> x) in
-  Log.info (lazy (sprintf "found %d cores" res));
+  Log.info "found %d cores" res;
   res
 
 (* ============================== Files ============================== *)

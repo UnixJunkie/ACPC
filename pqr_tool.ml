@@ -16,8 +16,8 @@ let main () =
   Log.color_on();
 
   if A.length Sys.argv <> 2 then begin
-    Log.fatalf "incorrect number of parameters\n\
-      usage: %s pqr_file" Sys.argv.(0);
+    Log.fatal "incorrect number of parameters\n\
+               usage: %s pqr_file" Sys.argv.(0);
     (*       0  1 *)
     exit 1;
   end else

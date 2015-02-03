@@ -38,14 +38,14 @@ let main () =
     (sprintf "Example: %s -q query.mol2 -db database.mol2\n"
        Sys.argv.(0));
   if (!query_fn = "" || !database_fn = "") then (
-    Log.fatalf "-q and -db are all mandatory";
+    Log.fatal "-q and -db are all mandatory";
     exit 1
   );
-  Log.warnf "only scoring molecules, not removing duplicates";
+  Log.warn "only scoring molecules, not removing duplicates";
   let feature = Feat.of_filename !query_fn in
   let db_feature = Feat.of_filename !database_fn in
   if feature <> db_feature then (
-    Log.fatalf "query and database feature space don't match: %s %s"
+    Log.fatal "query and database feature space don't match: %s %s"
       !query_fn !database_fn;
     exit 1
   );
@@ -92,7 +92,7 @@ let main () =
   );
   let stop_time = Unix.gettimeofday() in
   let elapsed_time = stop_time -. start_time in
-  Log.infof "speed: %.2f molecules/s"
+  Log.info "speed: %.2f molecules/s"
     ((float_of_int !nb_molecules) /. elapsed_time);
 ;;
 

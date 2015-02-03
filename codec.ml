@@ -28,7 +28,7 @@ let main () =
               decoding: %s -i database.{mol2|pqr|pl}.bin"
        Sys.argv.(0) Sys.argv.(0));
   if !input_fn = "" then (
-    Log.fatal (lazy ("-i is mandatory"));
+    Log.fatal "-i is mandatory";
     exit 1
   );
   let in_counter = ref 0 in
@@ -60,7 +60,7 @@ let main () =
   );
   let stop = Unix.gettimeofday() in
   let elapsed = stop -. start in
-  Log.infof "molecules: %d reading speed: %.2f molecules/s"
+  Log.info "molecules: %d reading speed: %.2f molecules/s"
     !in_counter ((float_of_int !in_counter) /. elapsed)
 ;;
 
