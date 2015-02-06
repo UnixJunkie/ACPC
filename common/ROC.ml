@@ -38,15 +38,23 @@ let unique dup_scores =
     values
 
 (* if the user provided a filename with all active molecule names inside,
-   the we use that to determine if a molecule is active, else we rely on the
+   then we use that to determine if a molecule is active, else we rely on the
    molecule name to start with "active" *)
 let dump_scored_labels maybe_actives_fn fn scores =
   let is_active_by_name mol_name =
     MU.int_of_bool (S.starts_with mol_name "active")
   in
+  let is_active_by_hashtbl ht mol_name =
+    MU.int_of_bool (HT.mem ht mol_name)
+  in
   let is_active = match maybe_actives_fn with
     | None -> is_active_by_name
-    | _ -> failwith "not implemented yet"
+    | Some actives_fn -> 
+      let ht = HT.create 500 in
+      MU.iter_on_lines_of_file
+        (fun mol_name -> HT.add ht mol_name ())
+        actives_fn;
+      is_active_by_hashtbl ht
   in
   Log.info "writing scores and labels in %s" fn;
   F.with_file_out fn (fun roc_out ->
