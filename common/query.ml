@@ -3,6 +3,7 @@ open Batteries
 open Molecule
 
 module AC = Autocorr
+module HT = Hashtbl
 module L  = List
 module MU = My_utils
 module S  = BatString
@@ -16,7 +17,23 @@ let query_for_parmap feature a indexed_query candidate =
   (candidate.name, candidate.index, score)
 
 let query_w_indexed_molecule
+    maybe_actives_fn
     feature a database_fn read_one_db_molecule nb_molecules indexed_queries =
+  let is_active_by_name mol_name =
+    S.starts_with mol_name "active"
+  in
+  let is_active_by_hashtbl ht mol_name =
+    HT.mem ht mol_name
+  in
+  let is_active = match maybe_actives_fn with
+    | None -> is_active_by_name
+    | Some actives_fn -> 
+      let ht = HT.create 500 in
+      MU.iter_on_lines_of_file
+        (fun mol_name -> HT.add ht mol_name ())
+        actives_fn;
+      is_active_by_hashtbl ht
+  in
   (* compute score-labels of all DB molecules against the query *)
   MU.with_in_file database_fn (fun input ->
     let score_labels, exn =
@@ -35,8 +52,7 @@ let query_w_indexed_molecule
                   indexed_queries
                )
            in
-           let label = S.starts_with name "active" in
-           (name, score, i, label)
+           (name, score, i, is_active name)
         )
     in
     assert(exn = End_of_file);
@@ -51,6 +67,7 @@ let index_query a (q_neg_ac, q_pos_ac) =
 (* query_molecules is either one molecule or the list of fragments of the
    initial query molecule *)
 let do_query
+    maybe_actives_fn
     feature a database_fn read_one_db_molecule nb_molecules query_molecules =
   let indexed_queries =
     L.map
@@ -60,4 +77,5 @@ let do_query
       query_molecules
   in
   query_w_indexed_molecule
+    maybe_actives_fn
     feature a database_fn read_one_db_molecule nb_molecules indexed_queries
