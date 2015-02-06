@@ -44,6 +44,10 @@ let itof = float_of_int
 (* truncate, does not round *)
 let ftoi = int_of_float
 
+let int_of_bool = function
+  | true -> 1
+  | false -> 0
+
 (* ============================== I/O ============================== *)
 
 (* like Python's readlines() *)
