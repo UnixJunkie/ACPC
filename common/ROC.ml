@@ -37,17 +37,23 @@ let unique dup_scores =
     (fun (_n1, _s1, i1, _l1) (_n2, _s2, i2, _l2) -> Int.compare i1 i2)
     values
 
-let dump_scored_labels fn scores =
+(* if the user provided a filename with all active molecule names inside,
+   the we use that to determine if a molecule is active, else we rely on the
+   molecule name to start with "active" *)
+let dump_scored_labels maybe_actives_fn fn scores =
+  let is_active_by_name mol_name =
+    MU.int_of_bool (S.starts_with mol_name "active")
+  in
+  let is_active = match maybe_actives_fn with
+    | None -> is_active_by_name
+    | _ -> failwith "not implemented yet"
+  in
   Log.info "writing scores and labels in %s" fn;
   F.with_file_out fn (fun roc_out ->
     L.iter
       (fun (_i, mol_name, score) ->
-         let is_active =
-           if S.starts_with mol_name "active"
-           then 1
-           else 0
         (* this is the format the CROC Python module reads in *)
-        in fprintf roc_out "%f %d\n" score is_active
+        fprintf roc_out "%f %d\n" score (is_active mol_name)
       )
       scores
   )
