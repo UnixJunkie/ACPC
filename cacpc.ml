@@ -27,6 +27,7 @@ let main () =
   let a = ref not_set_float in
   let er_ratio = ref not_set_float in
   let database_fn = ref "" in
+  let actives_fn = ref "" in
   let dump_scores = ref false in
   let break_RBNs = ref false in
   let post_filter = ref true in
@@ -37,6 +38,8 @@ let main () =
     "-a", Arg.Set_float a, "float kernel parameter (default depends \
                             on considered feature space and was optimized \
                             on DUD-E)";
+    "-actives", Arg.Set_string actives_fn, "some_file name of active molecules \
+                                            (one per line)";
     "-brbn", Arg.Set break_RBNs,
     " break the query molecule along its rotatable bonds";
     "-db", Arg.Set_string database_fn, "db.{mol2|pqr|pl}[.bin] database";
@@ -111,10 +114,14 @@ let main () =
   in
   let read_one_db_molecule = AC.get_reader !database_fn in
   let nb_molecules = ref 0 in
+  let maybe_actives_fn = match !actives_fn with
+    | "" -> None
+    | fn -> Some fn
+  in
   let score_labels =
     let scores =
       Q.do_query
-        feature !a !database_fn read_one_db_molecule nb_molecules
+        maybe_actives_fn feature !a !database_fn read_one_db_molecule nb_molecules
         query_molecules
     in
     if !post_filter then
@@ -167,7 +174,7 @@ let main () =
              let curr_score_labels =
                Q.do_query
                  (* (ref 0) means we ignore the number of DB molecules *)
-                 feature !a !database_fn read_one_db_molecule (ref 0) [q_mol]
+                 maybe_actives_fn feature !a !database_fn read_one_db_molecule (ref 0) [q_mol]
              in
              ROC.auc curr_score_labels
           )
