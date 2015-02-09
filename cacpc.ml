@@ -121,7 +121,8 @@ let main () =
   let score_labels =
     let scores =
       Q.do_query
-        maybe_actives_fn feature !a !database_fn read_one_db_molecule nb_molecules
+        maybe_actives_fn
+        feature !a !database_fn read_one_db_molecule nb_molecules
         query_molecules
     in
     if !post_filter then
@@ -174,7 +175,8 @@ let main () =
              let curr_score_labels =
                Q.do_query
                  (* (ref 0) means we ignore the number of DB molecules *)
-                 maybe_actives_fn feature !a !database_fn read_one_db_molecule (ref 0) [q_mol]
+                 maybe_actives_fn
+                 feature !a !database_fn read_one_db_molecule (ref 0) [q_mol]
              in
              ROC.auc curr_score_labels
           )
