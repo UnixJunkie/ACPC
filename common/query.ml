@@ -16,23 +16,27 @@ let query_for_parmap feature a indexed_query candidate =
      in fact ! \(^v^)/ *)
   (candidate.name, candidate.index, score)
 
+let is_active_by_name mol_name =
+  S.starts_with mol_name "active"
+
+let is_active_by_ht ht mol_name =
+  HT.mem ht mol_name
+
 let query_w_indexed_molecule
     maybe_actives_fn
     feature a database_fn read_one_db_molecule nb_molecules indexed_queries =
-  let is_active_by_name mol_name =
-    S.starts_with mol_name "active"
-  in
-  let is_active_by_hashtbl ht mol_name =
-    HT.mem ht mol_name
-  in
-  let is_active = match maybe_actives_fn with
-    | None -> is_active_by_name
+  let actives = match maybe_actives_fn with
+    | None -> HT.create 0
     | Some actives_fn -> 
       let ht = HT.create 500 in
       MU.iter_on_lines_of_file
         (fun mol_name -> HT.add ht mol_name ())
         actives_fn;
-      is_active_by_hashtbl ht
+      ht
+  in
+  let is_active = match maybe_actives_fn with
+    | None -> is_active_by_name
+    | Some _ -> is_active_by_ht actives
   in
   (* compute score-labels of all DB molecules against the query *)
   MU.with_in_file database_fn (fun input ->
