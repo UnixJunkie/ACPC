@@ -104,7 +104,7 @@ let read_mol2_file f =
 let explode input_f =
   let molecules = read_mol2_file   input_f in
   let out_dir   = F.chop_extension input_f in
-  Log.info (lazy (sprintf "molecules in %s: %d" input_f (L.length molecules)));
+  Log.info "molecules in %s: %d" input_f (L.length molecules);
   L.mapi
     (fun j (m, m_name) ->
       let new_dir  = sprintf "%s_%07d" out_dir (j + 1) in
@@ -144,9 +144,9 @@ let main () =
      exit 1)
   else
     let new_files = explode Sys.argv.(1) in
-    Log.info (lazy "Files created:");
+    Log.info "Files created:";
     L.iter
-      (fun (fn, _m_name) -> Log.info (lazy fn))
+      (fun (fn, _m_name) -> Log.info "%s" fn)
       new_files
 ;;
 

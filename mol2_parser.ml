@@ -31,7 +31,7 @@ let atoms_end_tag   = Str.regexp_string "@<TRIPOS>BOND"
  *)
 let read_molecules fn =
   if not (F.check_suffix fn ".mol2") then (
-    Log.warn (lazy (sprintf "%s not a .mol2 file" fn))
+    Log.warn "%s not a .mol2 file" fn
   );
   let nb_molecules = ref 0 in
   let res = ref [] in
@@ -59,15 +59,15 @@ let read_molecules fn =
             let atom = At.atom_of_mol2_line line in
             state := Reading_atoms (mol_name, index, atom :: atoms)));
     done with _ -> close_in input);
-  Log.info (lazy (sprintf "%d molecule(s) in %s" !nb_molecules fn));
+  Log.info "%d molecule(s) in %s" !nb_molecules fn;
   (* preserve molecules' order from the input file *)
   L.rev !res
 
 (* store all lines of all molecules, for later reference by index *)
 let read_raw_molecules fn =
-  Log.infof "indexing molecules from %s..." fn;
+  Log.info "indexing molecules from %s..." fn;
   if not (F.check_suffix fn ".mol2") then (
-    Log.warn (lazy (sprintf "%s not a .mol2 file" fn))
+    Log.warn "%s not a .mol2 file" fn
   );
   let all_lines = MU.string_list_of_file fn in
   let all_molecules =
@@ -80,7 +80,7 @@ let read_raw_molecules fn =
   let nb_molecules = L.length all_molecules in
   (* put back the header of each molecule, removed by BatList.nsplit *)
   let res = A.of_list (L.map (fun m -> mol_start_str :: m) all_molecules) in
-  Log.infof "%d molecule(s) in %s" nb_molecules fn;
+  Log.info "%d molecule(s) in %s" nb_molecules fn;
   res
 
 exception Break

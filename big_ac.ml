@@ -52,10 +52,9 @@ let main () =
   let start = Unix.gettimeofday() in
   Log.set_log_level Log.INFO;
   Log.color_on();
-  Log.info (lazy
-              "\n\nCopyright (C) 2014, Zhang Initiative Research Unit,\n\
-               Institute Laboratories, RIKEN\n\
-               2-1 Hirosawa, Wako, Saitama 351-0198, Japan\n");
+  Log.info "\n\nCopyright (C) 2014, Zhang Initiative Research Unit,\n\
+            Institute Laboratories, RIKEN\n\
+            2-1 Hirosawa, Wako, Saitama 351-0198, Japan\n";
   (* default option values *)
   let query_file  = ref ""    in
   let db_file     = ref ""    in
@@ -69,14 +68,14 @@ let main () =
   Arg.parse cmd_line ignore
     (sprintf "Example: %s -q query.mol2 -db database.mol2\n" Sys.argv.(0));
   if !query_file = "" then begin
-    Log.fatal (lazy ("-q query_file.mol2 is mandatory"));
+    Log.fatal "-q query_file.mol2 is mandatory";
     exit 1
   end;
   let nb_molecules_in_db = do_query !query_file !db_file !dx in
   let stop = Unix.gettimeofday() in
   let elapsed = stop -. start in
-  Log.info (lazy (sprintf "speed: %.2f molecules/s"
-                    ((float_of_int nb_molecules_in_db) /. elapsed)))
+  Log.info "speed: %.2f molecules/s"
+    ((float_of_int nb_molecules_in_db) /. elapsed)
 ;;
 
 main()

@@ -55,9 +55,9 @@ let linbin_autocorr maybe_debug_fn dx (mol_name, _index, atoms) =
   let neg_ac', pos_ac' = AC.auto_correlation atoms in
   let neg_ac , pos_ac =
     protect neg_ac'
-      (fun _ -> Log.warn (lazy (sprintf "empty neg_ac in %s" mol_name))),
+      (fun _ -> Log.warn "empty neg_ac in %s" mol_name),
     protect pos_ac'
-      (fun _ -> Log.warn (lazy (sprintf "empty pos_ac in %s" mol_name)))
+      (fun _ -> Log.warn "empty pos_ac in %s" mol_name)
   in
   let lb_neg_ac = linear_binning dx neg_ac in
   let lb_pos_ac = linear_binning dx pos_ac in

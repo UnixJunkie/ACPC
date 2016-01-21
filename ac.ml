@@ -80,7 +80,7 @@ let do_query
                in
                (unused_molecule_index, query_name, query_ac)
       | queries ->
-        let _ = Log.fatalf "more than one molecule in %s" query_file in
+        let _ = Log.fatal "more than one molecule in %s" query_file in
         exit 1
   in
   let dup_scores = (* may contain duplicate molecules (diff. comformers of
@@ -96,7 +96,7 @@ let do_query
     if post_filter then
       ROC.unique dup_scores
     else
-      let _ = Log.warn (lazy "not removing duplicate molecules") in
+      let _ = Log.warn "not removing duplicate molecules" in
       dup_scores
   in
   let maybe_list_htq =
@@ -117,7 +117,7 @@ let do_query
       nan
   in
   if top_n <> 0 && out_fn <> "" then (
-    Log.infof "outputting top %d molecules in %s..." top_n out_fn;
+    Log.info "outputting top %d molecules in %s..." top_n out_fn;
     (* put all molecules in a table *)
     let indexed_molecules = Mol2.read_raw_molecules db_file in
     (* output top N best ones *)
@@ -143,19 +143,18 @@ let do_query
        sprintf "plot '%s' u 1:2 w lines notitle, \
                       f(x)      w lines notitle" roc_curve]
   );
-  Log.info (lazy (
-    sprintf "db: %s q: %s cmp: %s dx: %f AUC: %.3f"
-      db_file query_file cmp_str dx auc));
+  Log.info
+    "db: %s q: %s cmp: %s dx: %f AUC: %.3f"
+      db_file query_file cmp_str dx auc;
   if do_ROC && do_plot then MU.run_command ("gnuplot -persist " ^ roc_plot)
 
 let main () =
   let start = Unix.gettimeofday() in
   Log.set_log_level Log.INFO;
   Log.color_on();
-  Log.info (lazy
-              "\n\nCopyright (C) 2014, Zhang Initiative Research Unit,\n\
-               Institute Laboratories, RIKEN\n\
-               2-1 Hirosawa, Wako, Saitama 351-0198, Japan\n");
+  Log.info "\n\nCopyright (C) 2014, Zhang Initiative Research Unit,\n\
+            Institute Laboratories, RIKEN\n\
+            2-1 Hirosawa, Wako, Saitama 351-0198, Japan\n";
   (* default option values *)
   let cmp_method  = ref "CC"  in
   let query_file  = ref ""    in
@@ -198,7 +197,7 @@ let main () =
   Arg.parse cmd_line ignore
     (sprintf "Example: %s -q query.mol2 -db database.mol2\n" Sys.argv.(0));
   if !query_file <> "" && !query_files <> "" then begin
-    Log.fatal (lazy ("use either -q or -qf, not both"));
+    Log.fatal "use either -q or -qf, not both";
     exit 1
   end;
   let cmp_f = comparison_of_string !cmp_method in
@@ -245,9 +244,9 @@ let main () =
   in
   let stop = Unix.gettimeofday() in
   let elapsed = stop -. start in
-  Log.info (lazy (
-    sprintf "speed: %.2f molecules/s"
-      ((float_of_int nb_queries) *. nb_molecules_in_db /. elapsed)));
+  Log.info
+    "speed: %.2f molecules/s"
+    ((float_of_int nb_queries) *. nb_molecules_in_db /. elapsed);
 ;;
 
 main()

@@ -618,7 +618,7 @@ let get_nprocs () =
   (* WARNING: Linux-specific and unportable code *)
   let out = get_command_output "egrep -c '^processor' /proc/cpuinfo" in
   let res = Scanf.sscanf out "%d" (fun x -> x) in
-  Log.info (lazy (sprintf "found %d cores" res));
+  Log.info "found %d cores" res;
   res
 
 (* ============================== Files ============================== *)

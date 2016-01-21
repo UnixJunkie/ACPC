@@ -30,7 +30,7 @@ let unique dup_scores =
     )
     dup_scores;
   if !removed > 0 then
-  Log.warnf "removed %d molecules (duplicated names)" !removed;
+  Log.warn "removed %d molecules (duplicated names)" !removed;
   (* return them in the same order that they were found *)
   let key_values = MU.key_values map in
   let to_sort =
@@ -43,7 +43,7 @@ let unique dup_scores =
     to_sort
 
 let dump_scored_labels fn scores =
-  Log.info (lazy (sprintf "writing scores and labels in %s" fn));
+  Log.info "writing scores and labels in %s" fn;
   F.with_file_out fn (fun roc_out ->
     L.iter
       (fun (_i, mol_name, score) ->
@@ -59,7 +59,7 @@ let dump_scored_labels fn scores =
 
 (* dump ranks and return the top_n scoring molecules *)
 let dump_ranks fn scores maybe_list_htq top_n =
-  Log.info (lazy (sprintf "writing names, scores and ranks in %s" fn));
+  Log.info "writing names, scores and ranks in %s" fn;
   let highest_scores_first =
     L.fast_sort (fun (_i1, _n1, x) (_i2, _n2, y) -> Float.compare y x) scores
   in
@@ -74,7 +74,7 @@ let dump_ranks fn scores maybe_list_htq top_n =
         L.iter
           (fun (i, mol_name, score) ->
             if score > s
-            then Log.infof "HTQ: %s %f %d" mol_name score i;
+            then Log.info "HTQ: %s %f %d" mol_name score i;
             fprintf out "%s %f %d\n" mol_name score i)
           highest_scores_first
   );
@@ -84,6 +84,6 @@ let read_AUC_from_string s =
   try
     Scanf.sscanf s "Area Under Curve = %f" identity
   with Scanf.Scan_failure _ ->
-    Log.error (lazy (sprintf "ROC.ml: read_AUC_from_string: \
-                              no AUC could be read"));
+    Log.error "ROC.ml: read_AUC_from_string: \
+               no AUC could be read";
     0.0
