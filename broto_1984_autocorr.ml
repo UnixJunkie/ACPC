@@ -24,8 +24,9 @@ open Printf
 open Batteries
 
 module MU = My_utils
-module PQR = Pqr_parser
+module MOL2 = Mol2_parser
 module PL = Pl_parser
+module PQR = Pqr_parser
 
 let auto_correlation feature_space atoms: (float * float) list =
   (* sort values by increasing distance: this is assumed later on *)
@@ -95,9 +96,12 @@ let m2005_histo feature_space atoms: (float * float) list =
       let normalized = sum /. (float_of_int nb_values) in
       loop (curr_dx +. 1.0) ((curr_dx, normalized) :: acc) rest
   in
-  assert(feature_space = Feature.Charge);
-  let pairs = auto_correlation feature_space atoms in
-  let _less_than_1A, more_than_1A = take_while (fun (d, _) -> d < 1.0) pairs in
+  if feature_space <> Feature.Charge then
+    failwith "m2005_histo: only mol2 files are supported"
+  ;
+  let ac = auto_correlation feature_space atoms in
+  print_autocorr ac;
+  let _less_than_1A, more_than_1A = take_while (fun (d, _) -> d < 1.0) ac in
   let between_1_and_13A, _dropped = take_while (fun (d, _) -> d <= 13.0) more_than_1A in
   let hist = loop 2.0 [] between_1_and_13A in
   print_histo hist;
@@ -141,6 +145,14 @@ let read_molecules query_file db_file =
     in
     let db_molecules = PL.read_molecules db_file in
     (Feature.LogP, query_molecule, db_molecules)
+  | "mol2" ->
+    let query_molecule =
+      match MOL2.read_molecules query_file with
+      | [molec] -> triple_of_molecule molec
+      | _ -> failwith (sprintf "read_molecules: not one molecule in %s" query_file)
+    in
+    let db_molecules = MOL2.read_molecules db_file in
+    (Feature.Charge, query_molecule, db_molecules)
   | fmt ->
     let _ = Log.fatal "read_molecules: unsupported format: %s" fmt in
     exit 1
