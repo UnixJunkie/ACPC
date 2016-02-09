@@ -39,6 +39,12 @@ let itof = float_of_int
 
 (* ============================== I/O ============================== *)
 
+let with_out_file (fn: string) (f: out_channel -> 'a): 'a =
+  let output = Legacy.open_out fn in
+  let res = f output in
+  Legacy.close_out output;
+  res
+
 (* like Python's readlines() *)
 let string_list_of_file f =
   L.of_enum (F.lines_of f)
