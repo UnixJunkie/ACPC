@@ -100,11 +100,11 @@ let m2005_histo feature_space atoms: (float * float) list =
     failwith "m2005_histo: only mol2 files are supported"
   ;
   let ac = auto_correlation feature_space atoms in
-  print_autocorr ac;
+  (* print_autocorr ac; *)
   let _less_than_1A, more_than_1A = take_while (fun (d, _) -> d < 1.0) ac in
   let between_1_and_13A, _dropped = take_while (fun (d, _) -> d <= 13.0) more_than_1A in
   let hist = loop 2.0 [] between_1_and_13A in
-  print_histo hist;
+  (* print_histo hist; *)
   hist
 
 let histo_of_method = function
@@ -163,24 +163,22 @@ let main () =
   (* default option values *)
   let query_file = ref "" in
   let db_file = ref "" in
-  let scores_file = ref "" in
   let method_str = ref "" in
   let cmd_line = Arg.align
       ["-q" , Arg.Set_string query_file , "query.{pqr|pl} query molecule";
        "-db", Arg.Set_string db_file    , "db.{pqr|pl} database";
-       "-o" , Arg.Set_string scores_file, "out.scores score-labels file";
        "-m" , Arg.Set_string method_str , "{b84|m2005}"]
   in
   Arg.parse cmd_line ignore
     (sprintf "Example: %s -q query.mol2 -db database.mol2\n" Sys.argv.(0));
   if !query_file = "" ||
      !db_file = "" ||
-     !scores_file = "" ||
      !method_str = "" then begin
     Log.fatal "-q, -db, -o amd -m are all mandatory";
     exit 1
   end;
-  let auc_file = !query_file ^ ".b84.auc" in
+  let auc_file = sprintf "%s.%s.auc" !query_file !method_str in
+  let scores_file = sprintf "%s.%s.scores" !query_file !method_str in
   let feature_space, (_, _, query_atoms), db_molecules =
     read_molecules !query_file !db_file
   in
@@ -188,7 +186,7 @@ let main () =
   let query_histo = histo_fun feature_space query_atoms |> List.map snd in (* discard distances *)
   let query_histo_len = List.length query_histo in
   (* print_histo query_histo; *)
-  MU.with_out_file !scores_file (fun out ->
+  MU.with_out_file scores_file (fun out ->
       List.iter (fun molec ->
           let name, _i, atoms = triple_of_molecule molec in
           let histo = histo_fun feature_space atoms |> List.map snd in
@@ -210,8 +208,8 @@ let main () =
     ROC.read_AUC_from_string
       (MU.get_command_output
          (sprintf "croc-curve < %s 1> /dev/null 2> %s; cat %s"
-            !scores_file auc_file auc_file))
+            scores_file auc_file auc_file))
   in
-  Log.info "q: %s AUC: %f" !query_file auc
+  Log.info "m: %s q: %s AUC: %f" !method_str !query_file auc
 
 let () = main ()
