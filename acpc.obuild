@@ -22,3 +22,9 @@ Executable acpc_mol2tool
   Path:         .
   BuildDepends: batteries, dolog, vector3
   MainIs:       mol2_tool.ml
+
+Executable b84
+  oflags: -bin-annot
+  Path:         .
+  BuildDepends: batteries, dolog, vector3
+  MainIs:       broto_1984_autocorr.ml
