@@ -1,12 +1,24 @@
 
-(* trial at reproducing method from  *)
+(* trial at reproducing methods from: *)
+
 (* "Molecular structures: perception, autocorrelation descriptor and sar studies" *)
 (* Pierre Broto, Gilles Moreau and Corinne Vandycke. *)
-(* Eur. J. Med. Chem. 1984-19 N1 pp 66-70 *)
+(* Eur. J. Med. Chem. 1984-19 N1 pp 66-70. *)
+(* We can reproduce easily their contribution to LogP and steric *)
+(* autocorrelation vectors. *)
+(* Albeit they were using their own contribution to LogP model. *)
+(* They use histograms (without normalization) and discretization step = 0.2A *)
 
-(* we can reproduce easily their contribution to LogP and steric *)
-(* autocorrelation vectors *)
-(* they use histograms without normalization with discretization step = 0.2A *)
+(* there is also code to reproduce the autocorrelation vector encoding from *)
+(* "Autocorrelation of Molecular Electrostatic Potential Surface Properties *)
+(* Combined with Partial Least Squares Analysis as Alternative Attractive *)
+(* Tool to Generate Ligand-Based 3D-QSArs" *)
+(* Stefano Moro et. al. *)
+(* Current Drug Discovery Technologies 2005. *)
+(* Albeit they were using EP at the molecular surface while we only use *)
+(* partial charges at atom centers. *)
+(* They use normalized histograms, *)
+(* from 1 to 13A with 12bins (1A discretization step) *)
 
 open Printf
 open Batteries
@@ -114,12 +126,14 @@ let main () =
   Log.color_on();
   (* default option values *)
   let query_file = ref "" in
-  let db_file    = ref "" in
+  let db_file = ref "" in
   let scores_file = ref "" in
+  let method_str = ref "" in
   let cmd_line = Arg.align
       ["-q" , Arg.Set_string query_file , "query.{pqr|pl} query molecule";
        "-db", Arg.Set_string db_file    , "db.{pqr|pl} database";
-       "-o" , Arg.Set_string scores_file, "out.scores score-labels file"]
+       "-o" , Arg.Set_string scores_file, "out.scores score-labels file";
+       "-m" , Arg.Set_string method_str , "{b84|m2005}"]
   in
   Arg.parse cmd_line ignore
     (sprintf "Example: %s -q query.mol2 -db database.mol2\n" Sys.argv.(0));
