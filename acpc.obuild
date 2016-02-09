@@ -82,5 +82,5 @@ Executable acpc_pltool
 Executable broto84
   oflags:         -bin-annot -w +27 -warn-error +8
   Path:           .
-  BuildDepends:   common, batteries, dolog, vector3
+  BuildDepends:   common, batteries, dolog, vector3, fileutils
   MainIs:         broto_1984_autocorr.ml
