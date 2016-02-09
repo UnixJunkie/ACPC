@@ -117,8 +117,8 @@ let main () =
   let db_file    = ref "" in
   let scores_file = ref "" in
   let cmd_line = Arg.align
-      ["-q" , Arg.Set_string query_file , "query.mol2 query molecule";
-       "-db", Arg.Set_string db_file    , "db.mol2 database";
+      ["-q" , Arg.Set_string query_file , "query.{pqr|pl} query molecule";
+       "-db", Arg.Set_string db_file    , "db.{pqr|pl} database";
        "-o" , Arg.Set_string scores_file, "out.scores score-labels file"]
   in
   Arg.parse cmd_line ignore
