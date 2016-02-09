@@ -11,11 +11,11 @@
 open Printf
 open Batteries
 
-module Mol2 = Mol2_parser
 module MU = My_utils
 module PQR = Pqr_parser
+module PL = Pl_parser
 
-let auto_correlation (atoms: Atom.atom list): (float * float) list =
+let auto_correlation feature_space atoms: (float * float) list =
   (* sort values by increasing distance: this is assumed later on *)
   let sort =
     List.fast_sort (fun (d1, _) (d2, _) -> BatFloat.compare d1 d2)
@@ -24,7 +24,7 @@ let auto_correlation (atoms: Atom.atom list): (float * float) list =
     let rec loop acc = function
       | [] -> acc
       | a1 :: others ->
-        let res = List.map (Autocorr.process_atoms a1) others in
+        let res = List.map (Atom.process_atoms feature_space a1) others in
         loop (List.rev_append res acc) others
     in
     loop [] l
@@ -67,8 +67,8 @@ let print_histo (hist: (float * float) list): unit =
 let print_autocorr =
   print_histo
 
-let b84_histo (atoms: Atom.atom list): (float * float) list =
-  let ac = auto_correlation atoms in
+let b84_histo feature_space atoms: (float * float) list =
+  let ac = auto_correlation feature_space atoms in
   (* print_autocorr ac; *)
   histo 0.2 ac
 
@@ -77,6 +77,9 @@ let truncate_histo min_len curr_len histo =
     List.take min_len histo
   else
     histo
+
+let triple_of_molecule m =
+  Molecule.(m.name, m.index, m.atoms)
 
 let read_molecules query_file db_file =
   let fmt_q = FilePath.get_extension query_file in
@@ -89,12 +92,19 @@ let read_molecules query_file db_file =
   | "pqr" ->
     let query_molecule =
       match PQR.read_molecules query_file with
-      | [one] -> one
+      | [molec] -> triple_of_molecule molec
       | _ -> failwith (sprintf "read_molecules: not one molecule in %s" query_file)
     in
     let db_molecules = PQR.read_molecules db_file in
-    (query_file, db_molecules)
-  | "pl" -> failwith "not implemented yet"
+    (Feature.Radius, query_molecule, db_molecules)
+  | "pl" ->
+    let query_molecule =
+      match PL.read_molecules query_file with
+      | [molec] -> triple_of_molecule molec
+      | _ -> failwith (sprintf "read_molecules: not one molecule in %s" query_file)
+    in
+    let db_molecules = PL.read_molecules db_file in
+    (Feature.LogP, query_molecule, db_molecules)
   | fmt ->
     let _ = Log.fatal "read_molecules: unsupported format: %s" fmt in
     exit 1
@@ -118,18 +128,16 @@ let main () =
     exit 1
   end;
   let auc_file = !query_file ^ ".b84.auc" in
-  let _, _, query_atoms =
-    match Mol2.read_molecules !query_file with
-    | [one] -> one
-    | _ -> failwith (sprintf "not one molecule in %s" !query_file)
+  let feature_space, (_, _, query_atoms), db_molecules =
+    read_molecules !query_file !db_file
   in
-  let query_histo = b84_histo query_atoms |> List.map snd in (* discard distances *)
+  let query_histo = b84_histo feature_space query_atoms |> List.map snd in (* discard distances *)
   let query_histo_len = List.length query_histo in
   (* print_histo query_histo; *)
-  let db_molecules = Mol2.read_molecules !db_file in
   MU.with_out_file !scores_file (fun out ->
-      List.iter (fun (name, _i, atoms) ->
-          let histo = b84_histo atoms |> List.map snd in
+      List.iter (fun molec ->
+          let name, _i, atoms = triple_of_molecule molec in
+          let histo = b84_histo feature_space atoms |> List.map snd in
           let histo_len = List.length histo in
           let min_len = min query_histo_len histo_len in
           let query_histo = truncate_histo min_len query_histo_len query_histo in
