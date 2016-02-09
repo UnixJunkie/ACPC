@@ -84,6 +84,21 @@ let b84_histo feature_space atoms: (float * float) list =
   (* print_autocorr ac; *)
   histo 0.2 ac
 
+let moro2005_histo pairs =
+  let _less_than_1A, more_than_1A = take_while (fun (d, _) -> d < 1.0) pairs in
+  let between_1_and_13A, _dropped = take_while (fun (d, _) -> d <= 13.0) more_than_1A in
+  let rec loop curr_dx acc to_process =
+    match to_process with
+    | [] -> List.rev acc
+    | _ ->
+      let values, rest = take_while (fun (d, _) -> d <= curr_dx) to_process in
+      let sum = fsum values in
+      let nb_values = List.length values in
+      let normalized = sum /. (float_of_int nb_values) in
+      loop (curr_dx +. 1.0) ((curr_dx, normalized) :: acc) rest
+  in
+  loop 2.0 [] between_1_and_13A
+
 let truncate_histo min_len curr_len histo =
   if curr_len > min_len then
     List.take min_len histo
