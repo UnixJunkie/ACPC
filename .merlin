@@ -1,0 +1,7 @@
+# where are .ml and .mli files
+S .
+# where are .cmi and .cmt files
+B dist/build/acpc
+B dist/build/acpc_big
+B dist/build/acpc_mol2tool
+PKG batteries dolog vector3 parmap
