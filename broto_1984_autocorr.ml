@@ -61,17 +61,6 @@ let fsum l =
   in
   loop 0.0 l
 
-let histo dx pairs =
-  let rec loop curr_dx acc to_process =
-    match to_process with
-    | [] -> List.rev acc
-    | _ ->
-      let values, rest = take_while (fun (d, _) -> d <= curr_dx) to_process in
-      let sum = fsum values in
-      loop (curr_dx +. dx) ((curr_dx, sum) :: acc) rest
-  in
-  loop dx [] pairs
-
 let print_histo (hist: (float * float) list): unit =
   List.iter (fun (d, x) -> printf "%f %f\n" d x) hist;
   printf "\n"
@@ -80,13 +69,22 @@ let print_autocorr =
   print_histo
 
 let b84_histo feature_space atoms: (float * float) list =
+  let histo dx pairs =
+    let rec loop curr_dx acc to_process =
+      match to_process with
+      | [] -> List.rev acc
+      | _ ->
+        let values, rest = take_while (fun (d, _) -> d <= curr_dx) to_process in
+        let sum = fsum values in
+        loop (curr_dx +. dx) ((curr_dx, sum) :: acc) rest
+    in
+    loop 0.2 [] pairs
+  in
   let ac = auto_correlation feature_space atoms in
   (* print_autocorr ac; *)
   histo 0.2 ac
 
-let moro2005_histo pairs =
-  let _less_than_1A, more_than_1A = take_while (fun (d, _) -> d < 1.0) pairs in
-  let between_1_and_13A, _dropped = take_while (fun (d, _) -> d <= 13.0) more_than_1A in
+let m2005_histo feature_space atoms: (float * float) list =
   let rec loop curr_dx acc to_process =
     match to_process with
     | [] -> List.rev acc
@@ -97,7 +95,18 @@ let moro2005_histo pairs =
       let normalized = sum /. (float_of_int nb_values) in
       loop (curr_dx +. 1.0) ((curr_dx, normalized) :: acc) rest
   in
-  loop 2.0 [] between_1_and_13A
+  assert(feature_space = Feature.Charge);
+  let pairs = auto_correlation feature_space atoms in
+  let _less_than_1A, more_than_1A = take_while (fun (d, _) -> d < 1.0) pairs in
+  let between_1_and_13A, _dropped = take_while (fun (d, _) -> d <= 13.0) more_than_1A in
+  let hist = loop 2.0 [] between_1_and_13A in
+  print_histo hist;
+  hist
+
+let histo_of_method = function
+  | "m2005" -> m2005_histo
+  | "b84" -> b84_histo
+  | m -> failwith (sprintf "histo_of_method: unknown method: %s" m)
 
 let truncate_histo min_len curr_len histo =
   if curr_len > min_len then
@@ -152,21 +161,25 @@ let main () =
   in
   Arg.parse cmd_line ignore
     (sprintf "Example: %s -q query.mol2 -db database.mol2\n" Sys.argv.(0));
-  if !query_file = "" || !db_file = "" || !scores_file = "" then begin
-    Log.fatal "-q, -db and -o are all mandatory";
+  if !query_file = "" ||
+     !db_file = "" ||
+     !scores_file = "" ||
+     !method_str = "" then begin
+    Log.fatal "-q, -db, -o amd -m are all mandatory";
     exit 1
   end;
   let auc_file = !query_file ^ ".b84.auc" in
   let feature_space, (_, _, query_atoms), db_molecules =
     read_molecules !query_file !db_file
   in
-  let query_histo = b84_histo feature_space query_atoms |> List.map snd in (* discard distances *)
+  let histo_fun = histo_of_method !method_str in
+  let query_histo = histo_fun feature_space query_atoms |> List.map snd in (* discard distances *)
   let query_histo_len = List.length query_histo in
   (* print_histo query_histo; *)
   MU.with_out_file !scores_file (fun out ->
       List.iter (fun molec ->
           let name, _i, atoms = triple_of_molecule molec in
-          let histo = b84_histo feature_space atoms |> List.map snd in
+          let histo = histo_fun feature_space atoms |> List.map snd in
           let histo_len = List.length histo in
           let min_len = min query_histo_len histo_len in
           let query_histo = truncate_histo min_len query_histo_len query_histo in
