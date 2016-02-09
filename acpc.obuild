@@ -6,7 +6,7 @@ Synopsis:   Chemoinformatics tool for ligand-based virtual screening
 obuild-ver: 1
 
 library common
-  oflags:       -annot -w +27 -warn-error +8
+  oflags:       -bin-annot -w +27 -warn-error +8
   modules:      My_utils, Amino_acid, Atom, Mol2_parser, Pqr_parser, Pl_parser,
                 Autocorr, ROC, Consensus, Molecule, Query, Molecular_graph,
                 Chimera_colors
@@ -14,67 +14,73 @@ library common
   BuildDepends: batteries, dolog, vector3, lacc, itv-tree, ocamlgraph
 
 Executable acpc
-  oflags:         -annot -w +27 -warn-error +8 -g
+  oflags:         -bin-annot -w +27 -warn-error +8 -g
   Path:           .
   BuildDepends:   common, batteries, dolog, vector3
   MainIs:         cacpc.ml
 
 Executable acpc_par
-  oflags:         -annot -w +27 -warn-error +8 -g
+  oflags:         -bin-annot -w +27 -warn-error +8 -g
   Path:           .
   BuildDepends:   common, batteries, dolog, parmap, vector3
   MainIs:         par_acpc.ml
 
 Executable acpc_consrank
-  oflags:         -annot -w +27 -warn-error +8
+  oflags:         -bin-annot -w +27 -warn-error +8
   Path:           .
   BuildDepends:   common, batteries, dolog
   MainIs:         cons_rank.ml
 
 Executable acpc_scorer
-  oflags:         -annot -w +27 -warn-error +8
+  oflags:         -bin-annot -w +27 -warn-error +8
   Path:           .
   BuildDepends:   common, batteries, dolog
   MainIs:         scorer.ml
 
 Executable acpc_ertool
-  oflags:         -annot -w +27 -warn-error +8
+  oflags:         -bin-annot -w +27 -warn-error +8
   Path:           .
   BuildDepends:   common, batteries, dolog
   MainIs:         er_tool.ml
 
 Executable acpc_auctool
-  oflags:         -annot -w +27 -warn-error +8
+  oflags:         -bin-annot -w +27 -warn-error +8
   Path:           .
   BuildDepends:   common, batteries, dolog
   MainIs:         auc_tool.ml
 
 Executable acpc_mol2reader
-  oflags:         -annot -w +27 -warn-error +8
+  oflags:         -bin-annot -w +27 -warn-error +8
   Path:           .
   BuildDepends:   common, batteries, dolog, vector3
   MainIs:         mol2_reader.ml
 
 Executable acpc_codec
-  oflags:         -annot -w +27 -warn-error +8
+  oflags:         -bin-annot -w +27 -warn-error +8
   Path:           .
   BuildDepends:   common, batteries, dolog, vector3
   MainIs:         codec.ml
 
 Executable acpc_mol2tool
-  oflags:         -annot -w +27 -warn-error +8
+  oflags:         -bin-annot -w +27 -warn-error +8
   Path:           .
   BuildDepends:   common, batteries, dolog, vector3
   MainIs:         mol2_tool.ml
 
 Executable acpc_pqrtool
-  oflags:         -annot -w +27 -warn-error +8
+  oflags:         -bin-annot -w +27 -warn-error +8
   Path:           .
   BuildDepends:   common, batteries, dolog, vector3
   MainIs:         pqr_tool.ml
 
 Executable acpc_pltool
-  oflags:         -annot -w +27 -warn-error +8
+  oflags:         -bin-annot -w +27 -warn-error +8
   Path:           .
   BuildDepends:   common, batteries, dolog, vector3
   MainIs:         pl_tool.ml
+
+Executable broto84
+  oflags:         -bin-annot -w +27 -warn-error +8
+  Path:           .
+  BuildDepends:   common, batteries, dolog, vector3
+  MainIs:         broto_1984_autocorr.ml
