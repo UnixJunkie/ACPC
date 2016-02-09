@@ -95,6 +95,7 @@ let main () =
     Log.fatal "-q, -db and -o are all mandatory";
     exit 1
   end;
+  let auc_file = !query_file ^ ".b84.auc" in
   let _, _, query_atoms = 
     match Mol2.read_molecules !query_file with
     | [one] -> one
@@ -120,6 +121,13 @@ let main () =
           (* this is the format the CROC Python module reads in *)
           fprintf out "%f %d\n" score is_active
         ) db_molecules
-    )
+    );
+  let auc =
+    ROC.read_AUC_from_string
+      (MU.get_command_output
+         (sprintf "croc-curve < %s 1> /dev/null 2> %s; cat %s"
+            !scores_file auc_file auc_file))
+  in
+  Log.info "q: %s AUC: %f" !query_file auc
 
 let () = main ()
