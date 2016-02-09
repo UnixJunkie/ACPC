@@ -58,12 +58,17 @@ let histo dx pairs =
   in
   loop dx [] pairs
 
-let b84_histo (atoms: Atom.atom list): (float * float) list =
-  histo 0.2 (auto_correlation atoms)
-
 let print_histo (hist: (float * float) list): unit =
   List.iter (fun (d, x) -> printf "%f %f\n" d x) hist;
   printf "\n"
+
+let print_autocorr =
+  print_histo
+
+let b84_histo (atoms: Atom.atom list): (float * float) list =
+  let ac = auto_correlation atoms in
+  (* print_autocorr ac; *)
+  histo 0.2 ac
 
 let main () =
   Log.set_log_level Log.INFO;
@@ -82,10 +87,14 @@ let main () =
     Log.fatal "-q and -db are mandatory";
     exit 1
   end;
-  let db_molecules = Mol2.read_molecules !db_file in
-  List.iter (fun (_name, _i, atoms) ->
-      let histo = b84_histo atoms in
-      print_histo histo
-    ) db_molecules
+  let query = Mol2.read_molecules !query_file in
+  let _, _, query_atoms = List.hd query in
+  let query_histo = b84_histo query_atoms in
+  print_histo query_histo
+  (* let db_molecules = Mol2.read_molecules !db_file in *)
+  (* List.iter (fun (_name, _i, atoms) -> *)
+  (*     let histo = b84_histo atoms in *)
+  (*     print_histo histo *)
+  (*   ) db_molecules *)
 
 let () = main ()
