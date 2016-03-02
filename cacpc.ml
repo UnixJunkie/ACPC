@@ -34,6 +34,7 @@ let main () =
   let query_fn = ref "" in
   let scan_out_fn = ref "" in
   let out_fn = ref "" in
+  let no_hydrogens = ref false in
   let cmd_line = Arg.align [
     "-a", Arg.Set_float a, "float kernel parameter (default depends \
                             on considered feature space and was optimized \
@@ -47,6 +48,7 @@ let main () =
     "x enrichment rate parameter; e.g. 0.01 --> ER_1%";
     "-nopp", Arg.Clear post_filter,
     " don't rm duplicate molecules (based on names)";
+    "-noH", Arg.Set no_hydrogens, " ignore hydrogen atoms in mol2 file";
     "-q", Arg.Set_string query_fn, "query.{mol2|pqr|pl} query";
     "-scan", Arg.Set_string scan_out_fn,
     "out_file scan delta AUC per atom in \

@@ -99,6 +99,16 @@ let of_mol2_line l =
         )
   with _ -> failwith ("atom.ml: of_mol2_line: could not parse: " ^ l)
 
+(* same as of_mol2_line except that hydrogen atoms are ignored *)
+let of_mol2_line_no_H l =
+  try Scanf.sscanf l " %d %s %f %f %f %s %d %s %f"
+        (fun _id _name x y z atom_type _subst_id _subst_name q ->
+           if atom_type = "H" then None
+           else Some { position = V3.make x y z ;
+                       prop     = Charge q      }
+        )
+  with _ -> failwith ("atom.ml: of_mol2_line_no_H: could not parse: " ^ l)
+
 let bond_of_mol2_line l =
   try Scanf.sscanf l " %d %d %d %s"
         (fun bond_i origin_atom_i target_atom_i _bond_type ->
