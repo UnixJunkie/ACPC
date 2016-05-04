@@ -74,14 +74,14 @@ let do_query
   let query_desc =
     let query = Mol2.read_molecules query_file in
     match query with
-      | []  -> failwith ("no molecule in query file: " ^ query_file)
-      | [q] -> let query_name, query_ac =
-                 Kde.linbin_autocorr debug_prefix_fn dx q
-               in
-               (unused_molecule_index, query_name, query_ac)
-      | queries ->
-        let _ = Log.fatal "more than one molecule in %s" query_file in
-        exit 1
+    | []  -> failwith ("no molecule in query file: " ^ query_file)
+    | [q] -> let query_name, query_ac =
+               Kde.linbin_autocorr debug_prefix_fn dx q
+      in
+      (unused_molecule_index, query_name, query_ac)
+    | queries ->
+      let _ = Log.fatal "more than one molecule in %s" query_file in
+      exit 1
   in
   let dup_scores = (* may contain duplicate molecules (diff. comformers of
                       a same molecule) *)
@@ -122,30 +122,30 @@ let do_query
     let indexed_molecules = Mol2.read_raw_molecules db_file in
     (* output top N best ones *)
     F.with_file_out out_fn (fun out ->
-      L.iter
-        (fun (i, _name, _score) ->
-           let molecule_lines = indexed_molecules.(i) in
-           L.iter (fprintf out "%s\n") molecule_lines
-        )
-        top_n_molecules
-    );
+        L.iter
+          (fun (i, _name, _score) ->
+             let molecule_lines = indexed_molecules.(i) in
+             L.iter (fprintf out "%s\n") molecule_lines
+          )
+          top_n_molecules
+      );
   );
   if do_ROC && do_plot then (
     MU.string_list_to_file roc_plot
       [sprintf
-          "set title \"%s\\ncmp: %s dx: %.4f AUC: %.3f\""
-          query_file cmp_str dx auc;
+         "set title \"%s\\ncmp: %s dx: %.4f AUC: %.3f\""
+         query_file cmp_str dx auc;
        "set size square";
        "set xlabel 'FPR'";
        "set ylabel 'TPR'";
        "set key bottom";
        "f(x) = x";
        sprintf "plot '%s' u 1:2 w lines notitle, \
-                      f(x)      w lines notitle" roc_curve]
+                f(x)      w lines notitle" roc_curve]
   );
   Log.info
     "db: %s q: %s cmp: %s dx: %f AUC: %.3f"
-      db_file query_file cmp_str dx auc;
+    db_file query_file cmp_str dx auc;
   if do_ROC && do_plot then MU.run_command ("gnuplot -persist " ^ roc_plot)
 
 let main () =
@@ -157,6 +157,7 @@ let main () =
             2-1 Hirosawa, Wako, Saitama 351-0198, Japan\n";
   (* default option values *)
   let cmp_method  = ref "CC"  in
+  let diameters   = ref false in
   let query_file  = ref ""    in
   let query_files = ref ""    in
   let db_file     = ref ""    in
@@ -170,30 +171,31 @@ let main () =
   let do_ROC      = ref true  in
   let list_htq    = ref false in
   let cmd_line = Arg.align [
-    "-cmp" , Arg.Set_string cmp_method ,
-    sprintf "{CC|Tani|Tref|Tdb} LBAC+/- comparison method (default: %s)"
-      !cmp_method;
-    "-htq" , Arg.Set list_htq          ,
-    " list molecules scoring Higher Than the Query with itself";
-    "-q"   , Arg.Set_string query_file , "query.mol2 query (incompatible \
-                                          with -qf)";
-    "-qf"  , Arg.Set_string query_files, "f file containing a list of mol2 \
-                                          files (incompatible with -q)";
-    "-db"  , Arg.Set_string db_file   , "db.mol2 database";
-    "-dx"  , Arg.Set_float dx         ,
-    (sprintf "float X axis discretization (default: %f)" !dx);
-    "-v"   , Arg.Set debug            , " output intermediate results";
-    "-nopp", Arg.Clear post_filter    , " don't rm duplicate molecules";
-    "-np"  , Arg.Set_int nprocs       ,
-    sprintf "nprocs max CPUs to use (default: %d)"
-      !nprocs;
-    "-ng"  , Arg.Clear do_plot        , " no gnuplot";
-    "-nr"  , Arg.Clear do_ROC         , " no ROC curve (also sets -ng)";
-    "-o"   , Arg.Set_string out_file  ,
-    "output.mol2 output file (also requires -top, incompatible with -qf)";
-    "-top" , Arg.Set_int top_n        ,
-    "N nb. best scoring molecules to output (also requires -o)";
-  ] in
+      "-cmp" , Arg.Set_string cmp_method ,
+      sprintf "{CC|Tani|Tref|Tdb} LBAC+/- comparison method (default: %s)"
+        !cmp_method;
+      "-diam", Arg.Set diameters, " output to stdout diameter of db molecules";
+      "-htq" , Arg.Set list_htq          ,
+      " list molecules scoring Higher Than the Query with itself";
+      "-q"   , Arg.Set_string query_file , "query.mol2 query (incompatible \
+                                            with -qf)";
+      "-qf"  , Arg.Set_string query_files, "f file containing a list of mol2 \
+                                            files (incompatible with -q)";
+      "-db"  , Arg.Set_string db_file   , "db.mol2 database";
+      "-dx"  , Arg.Set_float dx         ,
+      (sprintf "float X axis discretization (default: %f)" !dx);
+      "-v"   , Arg.Set debug            , " output intermediate results";
+      "-nopp", Arg.Clear post_filter    , " don't rm duplicate molecules";
+      "-np"  , Arg.Set_int nprocs       ,
+      sprintf "nprocs max CPUs to use (default: %d)"
+        !nprocs;
+      "-ng"  , Arg.Clear do_plot        , " no gnuplot";
+      "-nr"  , Arg.Clear do_ROC         , " no ROC curve (also sets -ng)";
+      "-o"   , Arg.Set_string out_file  ,
+      "output.mol2 output file (also requires -top, incompatible with -qf)";
+      "-top" , Arg.Set_int top_n        ,
+      "N nb. best scoring molecules to output (also requires -o)";
+    ] in
   Arg.parse cmd_line ignore
     (sprintf "Example: %s -q query.mol2 -db database.mol2\n" Sys.argv.(0));
   if !query_file <> "" && !query_files <> "" then begin
@@ -202,15 +204,33 @@ let main () =
   end;
   let cmp_f = comparison_of_string !cmp_method in
   let db_molecules = Mol2.read_molecules !db_file in
+  if !diameters then
+    begin
+      (* this is brute force (using autocorrelation);
+         a more efficient algorithm is possible
+         - w = atom chosen randomly
+         - x = furthest atom from w
+         - y = furthest atom from x
+         - z = furthest atom from y
+         - check furthest from z = x or at least that distance(y,z) = distance(x,y) *)
+      List.iter (fun (_mol_name, _index, atoms) ->
+          let neg_ac, pos_ac = AC.auto_correlation atoms in
+          let neg_diam = List.max (List.map fst neg_ac) in
+          let pos_diam = List.max (List.map fst pos_ac) in
+          let diam = max neg_diam pos_diam in
+          Printf.printf "%f\n" diam
+        ) db_molecules;
+      exit 0;
+    end;
   let nb_molecules_in_db = float_of_int (L.length db_molecules) in
   let db_kdes =
     let i = ref 0 in
     (if !nprocs > 1 then list_parmap !nprocs else L.map)
       (fun m ->
-        let name, ac = Kde.linbin_autocorr None !dx m in
-        let j = !i in
-        incr i;
-        (j, name, ac))
+         let name, ac = Kde.linbin_autocorr None !dx m in
+         let j = !i in
+         incr i;
+         (j, name, ac))
       db_molecules
   in
   let nb_queries =
@@ -235,9 +255,9 @@ let main () =
       let queries = MU.string_list_of_file !query_files in
       (if !nprocs > 1 then list_pariter !nprocs else L.iter)
         (fun q ->
-          do_query cmp_f !debug
-            q !dx !nprocs db_kdes !post_filter !db_file
-            !do_plot !do_ROC !list_htq 0 ""
+           do_query cmp_f !debug
+             q !dx !nprocs db_kdes !post_filter !db_file
+             !do_plot !do_ROC !list_htq 0 ""
         )
         queries;
       L.length queries
@@ -246,7 +266,6 @@ let main () =
   let elapsed = stop -. start in
   Log.info
     "speed: %.2f molecules/s"
-    ((float_of_int nb_queries) *. nb_molecules_in_db /. elapsed);
-;;
+    ((float_of_int nb_queries) *. nb_molecules_in_db /. elapsed)
 
-main()
+let () = main ()
