@@ -148,6 +148,12 @@ let do_query
     db_file query_file cmp_str dx auc;
   if do_ROC && do_plot then MU.run_command ("gnuplot -persist " ^ roc_plot)
 
+let molecule_diameter (_mol_name, _index, atoms) =
+  let neg_ac, pos_ac = AC.auto_correlation atoms in
+  let neg_diam = List.max (List.map fst neg_ac) in
+  let pos_diam = List.max (List.map fst pos_ac) in
+  max neg_diam pos_diam
+
 let main () =
   let start = Unix.gettimeofday() in
   Log.set_log_level Log.INFO;
@@ -213,11 +219,8 @@ let main () =
          - y = furthest atom from x
          - z = furthest atom from y
          - check furthest from z = x or at least that distance(y,z) = distance(x,y) *)
-      List.iter (fun (_mol_name, _index, atoms) ->
-          let neg_ac, pos_ac = AC.auto_correlation atoms in
-          let neg_diam = List.max (List.map fst neg_ac) in
-          let pos_diam = List.max (List.map fst pos_ac) in
-          let diam = max neg_diam pos_diam in
+      List.iter (fun molecule ->
+          let diam = molecule_diameter molecule in
           Printf.printf "%f\n" diam
         ) db_molecules;
       exit 0;
