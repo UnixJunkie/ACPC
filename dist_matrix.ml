@@ -1,3 +1,4 @@
+(* cache of distances between autocorrelation vectors of molecules *)
 
 module AC = Autocorr
 module HT = Hashtbl
@@ -12,7 +13,7 @@ let create autocorr_molecules: t =
     | mol0 :: xs ->
       List.iteri (fun j mol1 ->
           let k = i + j + 1 in
-          let dist = AC.tanimoto mol0 mol1 in
+          let dist = 1.0 -. (AC.tanimoto mol0 mol1) in
           HT.add res (i, k) dist
         ) xs;
       loop (i + 1) xs
