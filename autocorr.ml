@@ -70,11 +70,13 @@ let tanimoto_linbin_autocorrs    = score_linbin_autocorrs tanimoto
 let tversky_ref_linbin_autocorrs = score_linbin_autocorrs tversky_ref
 let tversky_db_linbin_autocorrs  = score_linbin_autocorrs tversky_db
 
+type autocorrelated = int * string * (float array * float array)
+
 (* Plain Tanimoto score (and not average of two Tanimotos like before)
    Tanimoto(vec_x, vec_y) = xy_sum /. (x2_sum +. y2_sum -. xy_sum) *)
 let tanimoto
-    ((neg_ac0, pos_ac0): float array * float array)
-    ((neg_ac1, pos_ac1): float array * float array): float =
+    ((_i0, _name0, (neg_ac0, pos_ac0)): autocorrelated)
+    ((_i1, _name1, (neg_ac1, pos_ac1)): autocorrelated): float =
   let sum_of_squares a =
     Array.fold_left
       (fun acc x -> acc +. (x *. x))
