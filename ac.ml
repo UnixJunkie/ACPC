@@ -259,8 +259,10 @@ let main () =
              ) db_kdes;
            fprintf out "\n";
            (* 1) compute distances *)
+           Log.info "computing distance matrix ...";
            let matrix = DM.create db_kdes in
            (* 2) write them out *)
+           Log.info "writing it out";
            let n = List.length db_kdes in
            for i = 0 to n - 1 do
              for j = 0 to n - 1 do
