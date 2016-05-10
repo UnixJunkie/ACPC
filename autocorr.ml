@@ -69,3 +69,34 @@ let score_linbin_autocorrs f
 let tanimoto_linbin_autocorrs    = score_linbin_autocorrs tanimoto
 let tversky_ref_linbin_autocorrs = score_linbin_autocorrs tversky_ref
 let tversky_db_linbin_autocorrs  = score_linbin_autocorrs tversky_db
+
+(* Plain Tanimoto score (and not average of two Tanimotos like before)
+   Tanimoto(vec_x, vec_y) = xy_sum /. (x2_sum +. y2_sum -. xy_sum) *)
+let tanimoto
+    ((neg_ac0, pos_ac0): float array * float array)
+    ((neg_ac1, pos_ac1): float array * float array): float =
+  let sum_of_squares a =
+    Array.fold_left
+      (fun acc x -> acc +. (x *. x))
+      0.0 a
+  in
+  let sum_of_products a1 a2 =
+    let n = min (A.length a1) (A.length a2) in
+    let res = ref 0.0 in
+    for i = 0 to n - 1 do
+      let x = a1.(i) in
+      let y = a2.(i) in
+      res := !res +. x *. y
+    done;
+    !res
+  in
+  let neg_ac0_2 = sum_of_squares neg_ac0 in
+  let neg_ac1_2 = sum_of_squares neg_ac1 in
+  let pos_ac0_2 = sum_of_squares pos_ac0 in
+  let pos_ac1_2 = sum_of_squares pos_ac1 in
+  let x2_sum = neg_ac0_2 +. pos_ac0_2 in
+  let y2_sum = neg_ac1_2 +. pos_ac1_2 in
+  let neg_xy_sum = sum_of_products neg_ac0 neg_ac1 in
+  let pos_xy_sum = sum_of_products pos_ac0 pos_ac1 in
+  let xy_sum = neg_xy_sum +. pos_xy_sum in
+  xy_sum /. (x2_sum +. y2_sum -. xy_sum)
