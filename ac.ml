@@ -272,7 +272,8 @@ let main () =
              done;
              fprintf out "\n";
            done
-        )
+        );
+      exit 0;
     end;
   let nb_queries =
     if !query_file <> "" then
