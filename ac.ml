@@ -1,9 +1,10 @@
 
+open Printf (* Legacy.Printf *)
 open Batteries
-open Printf
 
 module A    = Array
 module AC   = Autocorr
+module DM   = Dist_matrix
 module S    = String
 module F    = File
 module Fn   = Filename
@@ -128,7 +129,7 @@ let do_query
         L.iter
           (fun (i, _name, _score) ->
              let molecule_lines = indexed_molecules.(i) in
-             L.iter (fprintf out "%s\n") molecule_lines
+             L.iter (Printf.fprintf out "%s\n") molecule_lines
           )
           top_n_molecules
       );
@@ -170,6 +171,7 @@ let main () =
   let query_file  = ref ""    in
   let query_files = ref ""    in
   let db_file     = ref ""    in
+  let dist_matrix_file = ref "" in
   let out_file    = ref ""    in
   let dx          = ref 0.005 in
   let debug       = ref false in
@@ -191,6 +193,8 @@ let main () =
       "-qf"  , Arg.Set_string query_files, "f file containing a list of mol2 \
                                             files (incompatible with -q)";
       "-db"  , Arg.Set_string db_file   , "db.mol2 database";
+      "-dmatrix", Arg.Set_string dist_matrix_file,
+      "dist.csv compute distance matrix then output to file";
       "-dx"  , Arg.Set_float dx         ,
       (sprintf "float X axis discretization (default: %f)" !dx);
       "-v"   , Arg.Set debug            , " output intermediate results";
@@ -207,10 +211,11 @@ let main () =
     ] in
   Arg.parse cmd_line ignore
     (sprintf "Example: %s -q query.mol2 -db database.mol2\n" Sys.argv.(0));
-  if !query_file <> "" && !query_files <> "" then begin
-    Log.fatal "use either -q or -qf, not both";
-    exit 1
-  end;
+  if !query_file <> "" && !query_files <> "" then
+    begin
+      Log.fatal "use either -q or -qf, not both";
+      exit 1
+    end;
   let cmp_f = comparison_of_string !cmp_method in
   let db_molecules = Mol2.read_molecules !db_file in
   if !diameters then
@@ -239,6 +244,36 @@ let main () =
          (j, name, ac))
       db_molecules
   in
+  if !dist_matrix_file <> "" then
+    begin
+      (* first line is molecule names;
+         other lines are rows of the distance matrix *)
+      MU.with_out_file !dist_matrix_file
+        (fun out ->
+           (* 0) write header line *)
+           List.iteri (fun i (_i, name, _ac) ->
+               if i <> 0 then
+                 fprintf out " %s" name
+               else
+                 fprintf out "%s" name
+             ) db_kdes;
+           fprintf out "\n";
+           (* 1) compute distances *)
+           let matrix = DM.create db_kdes in
+           (* 2) write them out *)
+           let n = List.length db_kdes in
+           for i = 0 to n - 1 do
+             for j = 0 to n - 1 do
+               let dist = DM.get matrix i j in
+               if j <> 0 then
+                 fprintf out " %.3f" dist
+               else
+                 fprintf out "%.3f" dist
+             done;
+             fprintf out "\n";
+           done
+        )
+    end;
   let nb_queries =
     if !query_file <> "" then
       let _ =
