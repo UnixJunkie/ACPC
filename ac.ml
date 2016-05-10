@@ -22,26 +22,29 @@ let list_parmap ncores f l =
 let list_pariter ncores f l =
   Parmap.pariter ~ncores f (Parmap.L l)
 
-type comparison = CC | Tani | Tref | Tdb
+type comparison = CC | Tani | Tani2 | Tref | Tdb
 
 let comparison_of_string = function
-  | "CC"   -> CC
-  | "Tani" -> Tani
-  | "Tref" -> Tref
-  | "Tdb"  -> Tdb
+  | "CC"    -> CC
+  | "Tani"  -> Tani
+  | "Tani2" -> Tani2
+  | "Tref"  -> Tref
+  | "Tdb"   -> Tdb
   | s -> failwith ("ac.ml: unknown comparison method: " ^ s)
 
 let string_of_comparison = function
-  | CC   -> "CC"
-  | Tani -> "Tani"
-  | Tref -> "Tref"
-  | Tdb  -> "Tdb"
+  | CC    -> "CC"
+  | Tani  -> "Tani"
+  | Tani2 -> "Tani2"
+  | Tref  -> "Tref"
+  | Tdb   -> "Tdb"
 
 let fun_of_comparison = function
-  | CC   -> AC.correlate_linbin_autocorrs
-  | Tani -> AC.tanimoto_linbin_autocorrs
-  | Tref -> AC.tversky_ref_linbin_autocorrs
-  | Tdb  -> AC.tversky_db_linbin_autocorrs
+  | CC    -> AC.correlate_linbin_autocorrs
+  | Tani  -> AC.tanimoto_linbin_autocorrs
+  | Tani2 -> AC.tanimoto
+  | Tref  -> AC.tversky_ref_linbin_autocorrs
+  | Tdb   -> AC.tversky_db_linbin_autocorrs
 
 let do_query
     comparison
@@ -178,7 +181,7 @@ let main () =
   let list_htq    = ref false in
   let cmd_line = Arg.align [
       "-cmp" , Arg.Set_string cmp_method ,
-      sprintf "{CC|Tani|Tref|Tdb} LBAC+/- comparison method (default: %s)"
+      sprintf "{CC|Tani|Tani2|Tref|Tdb} LBAC+/- comparison method (default: %s)"
         !cmp_method;
       "-diam", Arg.Set diameters, " output to stdout diameter of db molecules";
       "-htq" , Arg.Set list_htq          ,
