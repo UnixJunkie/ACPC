@@ -36,7 +36,7 @@ let create ncores autocorr_molecules: t =
       Log.info "parallel map";
       assert(ncores > 1);
       let triples_ll =
-        Parmap.parmap ~ncores
+        Parmap.parmap ~ncores ~chunksize:1
           (fun (i, mol0, others) ->
              List.mapi
                (fun j mol1 ->
