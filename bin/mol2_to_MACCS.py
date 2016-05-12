@@ -17,19 +17,18 @@ def RetrieveMol2Block(fileLikeObject, delimiter="@<TRIPOS>MOLECULE"):
     if mol2:
         yield "".join(mol2)
 
-if __name__ == "__main__":
-    import sys
-    from rdkit.Chem import MACCSkeys
-    with open(sys.argv[1]) as in_file:
-        for mol2 in RetrieveMol2Block(in_file):
-            mol = rdkit.Chem.MolFromMol2Block(mol2)
-            try:
-                maccs = MACCSkeys.GenMACCSKeys(mol)
-                for bit in maccs:
-                    if bit:
-                        sys.stdout.write('1')
-                    else:
-                        sys.stdout.write('0')
-                sys.stdout.write('\n')
-            except:
-                sys.stdout.write('0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\n')
+import sys
+from rdkit.Chem import MACCSkeys
+with open(sys.argv[1]) as in_file:
+    for mol2 in RetrieveMol2Block(in_file):
+        mol = rdkit.Chem.MolFromMol2Block(mol2)
+        try:
+            maccs = MACCSkeys.GenMACCSKeys(mol)
+            for bit in maccs:
+                if bit:
+                    sys.stdout.write('1')
+                else:
+                    sys.stdout.write('0')
+            sys.stdout.write('\n')
+        except:
+            sys.stdout.write('0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\n')
