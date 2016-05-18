@@ -2,8 +2,11 @@
 
 # output the MACCS bitstring of each molecule found in a MOL2 file
 
+import os
 import rdkit.Chem
 import sys
+
+from rdkit.Chem import MACCSkeys
 
 def RetrieveMol2Block(fileLikeObject, delimiter="@<TRIPOS>MOLECULE"):
     """generator which retrieves one mol2 block at a time
@@ -17,18 +20,25 @@ def RetrieveMol2Block(fileLikeObject, delimiter="@<TRIPOS>MOLECULE"):
     if mol2:
         yield "".join(mol2)
 
-import sys
-from rdkit.Chem import MACCSkeys
-with open(sys.argv[1]) as in_file:
+input_fn = sys.argv[1]
+
+with open(input_fn) as in_file:
+    problems_fn = os.path.splitext(input_fn)[0] + ".errors.mol2"
+    problem_mols = open(problems_fn, 'w')
     for mol2 in RetrieveMol2Block(in_file):
         mol = rdkit.Chem.MolFromMol2Block(mol2)
+        mol_lines = str(mol2).split("\n")
+        mol_name = mol_lines[1]
+        bitstring = mol_name + " "
         try:
             maccs = MACCSkeys.GenMACCSKeys(mol)
             for bit in maccs:
                 if bit:
-                    sys.stdout.write('1')
+                    bitstring += "1"
                 else:
-                    sys.stdout.write('0')
-            sys.stdout.write('\n')
+                    bitstring += "0"
+            bitstring += "\n"
         except:
-            sys.stdout.write('0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\n')
+            bitstring = '0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\n'
+            problem_mols.write(mol2)
+        sys.stdout.write(bitstring)
