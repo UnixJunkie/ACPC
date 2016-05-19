@@ -562,6 +562,18 @@ let count_set_bits bitv =
     (fun acc b -> if b then acc + 1 else acc)
     0 bitv
 
+(* Tanimoto over bitvectors
+   Formula can be found at:
+   http://www.daylight.com/dayhtml/doc/theory/theory.finger.html *)
+let bitv_tanimoto fpA fpB =
+  let c = (* |A ^ B| *)
+    float_of_int (count_set_bits (Bitv.bw_and fpA fpB)) in
+  let a = (* |A ^ (-B)| *)
+    float_of_int (count_set_bits (Bitv.bw_and fpA (Bitv.bw_not fpB))) in
+  let b = (* |B ^ (-A)| *)
+    float_of_int (count_set_bits (Bitv.bw_and fpB (Bitv.bw_not fpA))) in
+  c /. (a +. b +. c)
+
 (* initialize the RNG using system time in ms as the seed (returned) *)
 let init_RNG () =
   let ms_int = int_of_float (1000.0 *. gettimeofday_fractional_part()) in
