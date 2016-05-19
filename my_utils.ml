@@ -556,6 +556,12 @@ let tversky_db xs ys =
   let xy_sum, _x2_sum, y2_sum = tanimoto_et_al xs ys in
   xy_sum /. y2_sum
 
+(* count set bits in a bitvector *)
+let count_set_bits bitv =
+  Bitv.fold_left
+    (fun acc b -> if b then acc + 1 else acc)
+    0 bitv
+
 (* initialize the RNG using system time in ms as the seed (returned) *)
 let init_RNG () =
   let ms_int = int_of_float (1000.0 *. gettimeofday_fractional_part()) in

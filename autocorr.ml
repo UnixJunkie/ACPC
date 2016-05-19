@@ -102,3 +102,15 @@ let tanimoto
   let pos_xy_sum = sum_of_products pos_ac0 pos_ac1 in
   let xy_sum = neg_xy_sum +. pos_xy_sum in
   xy_sum /. (x2_sum +. y2_sum -. xy_sum)
+
+(* Tanimoto over bitvectors
+   Formula can be found at:
+   http://www.daylight.com/dayhtml/doc/theory/theory.finger.html *)
+let bitv_tanimoto fpA fpB =
+  let c = (* |A ^ B| *)
+    float_of_int (MU.count_set_bits (Bitv.bw_and fpA fpB)) in
+  let a = (* |A ^ (-B)| *)
+    float_of_int (MU.count_set_bits (Bitv.bw_and fpA (Bitv.bw_not fpB))) in
+  let b = (* |B ^ (-A)| *)
+    float_of_int (MU.count_set_bits (Bitv.bw_and fpB (Bitv.bw_not fpA))) in
+  c /. (a +. b +. c)
