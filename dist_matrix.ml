@@ -5,7 +5,7 @@ module HT = Hashtbl
 
 type t = (int * int, float) HT.t
 
-let create ncores autocorr_molecules: t =
+let create ncores tani autocorr_molecules: t =
   let res = HT.create 1000 in
   if ncores = 1 then
     begin
@@ -15,7 +15,7 @@ let create ncores autocorr_molecules: t =
         | mol0 :: xs ->
           List.iteri (fun j mol1 ->
               let k = i + j + 1 in
-              let dist = 1.0 -. (AC.tanimoto mol0 mol1) in
+              let dist = 1.0 -. (tani mol0 mol1) in
               HT.add res (i, k) dist
             ) xs;
           loop (i + 1) xs
@@ -41,7 +41,7 @@ let create ncores autocorr_molecules: t =
              List.mapi
                (fun j mol1 ->
                   let k = i + j + 1 in
-                  let dist = 1.0 -. (AC.tanimoto mol0 mol1) in
+                  let dist = 1.0 -. (tani mol0 mol1) in
                   (i, k, dist)
                ) others
           ) (Parmap.L prepared)
