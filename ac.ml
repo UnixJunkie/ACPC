@@ -172,6 +172,7 @@ let main () =
   let query_files = ref ""    in
   let db_file     = ref ""    in
   let dist_matrix_file = ref "" in
+  let maccs_file  = ref ""    in (* where to read MACCS bitvectors from *)
   let out_file    = ref ""    in
   let dx          = ref 0.005 in
   let debug       = ref false in
@@ -195,6 +196,8 @@ let main () =
       "-db"  , Arg.Set_string db_file   , "db.mol2 database";
       "-dmatrix", Arg.Set_string dist_matrix_file,
       "dist.csv compute distance matrix then output to file";
+      "-maccs", Arg.Set_string maccs_file,
+      "file.maccs read molecule names and MACCS bitstrings from file";
       "-dx"  , Arg.Set_float dx         ,
       (sprintf "float X axis discretization (default: %f)" !dx);
       "-v"   , Arg.Set debug            , " output intermediate results";
@@ -250,30 +253,61 @@ let main () =
          other lines are rows of the distance matrix *)
       MU.with_out_file !dist_matrix_file
         (fun out ->
-           (* 0) write header line *)
-           List.iteri (fun i (_i, name, _ac) ->
-               if i <> 0 then
-                 fprintf out " %s" name
-               else
-                 fprintf out "%s" name
-             ) db_kdes;
-           fprintf out "\n";
-           (* 1) compute distances *)
-           Log.info "computing distance matrix ...";
-           let matrix = DM.create !nprocs AC.tanimoto db_kdes in
-           (* 2) write them out *)
-           Log.info "writing it out";
-           let n = List.length db_kdes in
-           for i = 0 to n - 1 do
-             for j = 0 to n - 1 do
-               let dist = DM.get matrix i j in
-               if j <> 0 then
-                 fprintf out " %.3f" dist
-               else
-                 fprintf out "%.3f" dist
-             done;
+           if !maccs_file <> "" then
+             (* 0) write header line *)
+             let tani, encoded_molecules =
+               let maccs_fps = Maccs_reader.read_molecules !maccs_file in
+               (MU.bitv_tanimoto, maccs_fps)
+             in
+             List.iteri (fun i (_i, name, _ac) ->
+                 if i <> 0 then
+                   fprintf out " %s" name
+                 else
+                   fprintf out "%s" name
+               ) encoded_molecules;
              fprintf out "\n";
-           done
+             (* 1) compute distances *)
+             Log.info "computing MACCS distance matrix ...";
+             let matrix = DM.create !nprocs tani encoded_molecules in
+             (* 2) write them out *)
+             Log.info "writing it out";
+             let n = List.length encoded_molecules in
+             for i = 0 to n - 1 do
+               for j = 0 to n - 1 do
+                 let dist = DM.get matrix i j in
+                 if j <> 0 then
+                   fprintf out " %.3f" dist
+                 else
+                   fprintf out "%.3f" dist
+               done;
+               fprintf out "\n";
+             done
+           else
+             (* 0) write header line *)
+             let tani, encoded_molecules = AC.tanimoto, db_kdes in
+             List.iteri (fun i (_i, name, _ac) ->
+                 if i <> 0 then
+                   fprintf out " %s" name
+                 else
+                   fprintf out "%s" name
+               ) encoded_molecules;
+             fprintf out "\n";
+             (* 1) compute distances *)
+             Log.info "computing ACPC distance matrix ...";
+             let matrix = DM.create !nprocs tani encoded_molecules in
+             (* 2) write them out *)
+             Log.info "writing it out";
+             let n = List.length db_kdes in
+             for i = 0 to n - 1 do
+               for j = 0 to n - 1 do
+                 let dist = DM.get matrix i j in
+                 if j <> 0 then
+                   fprintf out " %.3f" dist
+                 else
+                   fprintf out "%.3f" dist
+               done;
+               fprintf out "\n";
+             done
         );
       exit 0;
     end;

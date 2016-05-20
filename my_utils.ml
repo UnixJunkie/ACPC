@@ -563,7 +563,7 @@ let count_set_bits bitv =
     0 bitv
 
 (* Tanimoto over bitvectors (same formula as above in fact) *)
-let bitv_tanimoto fpA fpB =
+let bitv_tanimoto (_iA, _nameA, fpA) (_iB, _nameB, fpB): float =
   let nc = float_of_int (count_set_bits (Bitv.bw_and fpA fpB)) in
   let na = float_of_int (count_set_bits fpA) in
   let nb = float_of_int (count_set_bits fpB) in
