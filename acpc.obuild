@@ -6,25 +6,25 @@ Synopsis:   Chemoinformatics tool for ligand-based virtual screening
 obuild-ver: 1
 
 Executable acpc
-  oflags:       -bin-annot
+  oflags:       -bin-annot -keep-locs
   Path:         .
   BuildDepends: batteries, dolog, vector3, parmap, bitv
   MainIs:       ac.ml
 
 Executable acpc_big
-  oflags:       -bin-annot
+  oflags:       -bin-annot -keep-locs
   Path:         .
   BuildDepends: batteries, dolog, vector3, bitv
   MainIs:       big_ac.ml
 
 Executable acpc_mol2tool
-  oflags:       -bin-annot
+  oflags:       -bin-annot -keep-locs
   Path:         .
   BuildDepends: batteries, dolog, vector3, bitv
   MainIs:       mol2_tool.ml
 
 Executable broto84
-  oflags:       -bin-annot
+  oflags:       -bin-annot -keep-locs
   Path:         .
   BuildDepends: batteries, dolog, vector3, bitv
   MainIs:       broto_1984_autocorr.ml
