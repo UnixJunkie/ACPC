@@ -25,11 +25,14 @@ input_fn = sys.argv[1]
 with open(input_fn) as in_file:
     problems_fn = os.path.splitext(input_fn)[0] + ".errors.mol2"
     problem_mols = open(problems_fn, 'w')
-    for mol2 in RetrieveMol2Block(in_file):
-        mol = rdkit.Chem.MolFromMol2Block(mol2)
-        mol_lines = str(mol2).split("\n")
-        mol_name = mol_lines[1]
-        bitstring = mol_name + " "
+    input = rdkit.Chem.SDMolSupplier(input_fn)
+    # for mol2 in RetrieveMol2Block(in_file):
+    for mol in input:
+        # mol = rdkit.Chem.MolFromMol2Block(mol2)
+        # mol_lines = str(mol2).split("\n")
+        # mol_name = mol_lines[1]
+        # bitstring = mol_name + " "
+        bitstring = ""
         try:
             maccs = MACCSkeys.GenMACCSKeys(mol)
             for bit in maccs:
@@ -40,5 +43,5 @@ with open(input_fn) as in_file:
             bitstring += "\n"
         except:
             bitstring += '00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\n'
-            problem_mols.write(mol2)
+            # problem_mols.write(mol2)
         sys.stdout.write(bitstring)
