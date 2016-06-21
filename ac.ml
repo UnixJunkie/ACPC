@@ -302,7 +302,7 @@ let main () =
                for j = 0 to n - 1 do
                  let dist = DM.get matrix i j in
                  if j <> 0 then
-                   fprintf out " %.3f" dist
+                   fprintf out "\t%.3f" dist
                  else
                    fprintf out "%.3f" dist
                done;
