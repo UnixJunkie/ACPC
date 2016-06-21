@@ -261,7 +261,7 @@ let main () =
              in
              List.iteri (fun i (_i, name, _ac) ->
                  if i <> 0 then
-                   fprintf out " %s" name
+                   fprintf out "\t%s" name
                  else
                    fprintf out "%s" name
                ) encoded_molecules;
@@ -276,7 +276,7 @@ let main () =
                for j = 0 to n - 1 do
                  let dist = DM.get matrix i j in
                  if j <> 0 then
-                   fprintf out " %.3f" dist
+                   fprintf out "\t%.3f" dist
                  else
                    fprintf out "%.3f" dist
                done;
@@ -287,7 +287,7 @@ let main () =
              let tani, encoded_molecules = AC.tanimoto, db_kdes in
              List.iteri (fun i (_i, name, _ac) ->
                  if i <> 0 then
-                   fprintf out " %s" name
+                   fprintf out "\t%s" name
                  else
                    fprintf out "%s" name
                ) encoded_molecules;
