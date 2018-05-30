@@ -39,7 +39,6 @@ open Printf
 
 module A    = Array
 module At   = Atom
-module Dacc = Lacc.Dacc
 module F    = Filename
 module L    = List
 module MU   = My_utils
@@ -54,7 +53,6 @@ let atoms_end_tag   = Str.regexp_string "END"
 
 (* will throw End_of_file once there is no more to read *)
 let read_one_molecule counter input =
-  let res = Dacc.create () in
   (* skip lines until we start to read a new molecule *)
   while not (Str.string_match mol_start_tag (Legacy.input_line input) 0)
   do () done;
@@ -65,14 +63,14 @@ let read_one_molecule counter input =
     let line = Legacy.input_line input in
     if not (Str.string_match atoms_end_tag line 0) then
       let atom = At.of_pl_line line in
-      read_atoms (Dacc.accum acc atom)
+      read_atoms (atom :: acc)
     else
-      ()
+      acc
   in
-  read_atoms res;
+  let res = read_atoms [] in
   let i = !counter in
   incr counter;
-  Mol.create molecule_name i (Dacc.return res)
+  Mol.create molecule_name i (L.rev res)
 
 (* read all molecules from fn
    returns: [(name, [atoms]); ...] *)
@@ -80,12 +78,13 @@ let read_molecules fn =
   if not (F.check_suffix fn ".pl")
   then Log.warn "%s not a .pl file" fn;
   let nb_molecules = ref 0 in
-  let molecules, _eof =
+  let molecules, exn =
     MU.with_in_file fn (fun input ->
-      MU.unfold_exc (fun () ->
+      L.unfold_exc (fun () ->
         read_one_molecule nb_molecules input
       )
     )
   in
+  assert(exn = End_of_file);
   Log.info "%d molecule(s) in %s" !nb_molecules fn;
   molecules

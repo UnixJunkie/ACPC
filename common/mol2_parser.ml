@@ -10,8 +10,7 @@ open Batteries
 
 module A    = Array
 module At   = Atom
-module Dacc = Lacc.Dacc
-module L    = List
+module L    = BatList
 module F    = Filename
 module Mol  = Molecule
 module MU   = My_utils
@@ -41,7 +40,7 @@ let read_one_molecule counter input =
   do () done;
   (* read all atoms *)
   let atoms, _exn =
-    MU.unfold_exc
+    L.unfold_exc
       (fun () -> let line = Legacy.input_line input in
                  if starts_with atoms_end_tag line
                  then raise Break
@@ -56,7 +55,7 @@ let read_one_molecule_with_bonds counter input =
   let m = read_one_molecule counter input in
   (* read all bonds *)
   let bonds, _exn =
-    MU.unfold_exc
+    L.unfold_exc
       (fun () -> let line = Legacy.input_line input in
                  if starts_with bonds_end_tag line
                  then raise Break
@@ -82,10 +81,10 @@ let read_molecules fn =
   MU.with_in_file fn (fun input ->
     let nb_molecules = ref 0 in
     let molecules, exn =
-      MU.unfold_exc
+      L.unfold_exc
         (fun () -> read_one nb_molecules input)
     in
-    assert (exn = End_of_file);
+    assert(exn = End_of_file);
     Log.info "%d molecule(s) in %s" !nb_molecules fn;
     molecules
   )

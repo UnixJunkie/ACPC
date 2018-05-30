@@ -1,8 +1,7 @@
 
 open Batteries
 
-module A     = Array
-module Dacc  = Lacc.Dacc
+module A     = BatArray
 module F     = File
 module FN    = Filename
 module HT    = Legacy.Hashtbl
@@ -160,33 +159,16 @@ let max_a a =
 
 (* ============================== Lists ============================== *)
 
-let remove_at i lst =
-  let rec loop dst i = function
-    | [] -> invalid_arg "MU.remove_at"
-    | x :: xs ->
-      if i = 0 then
-        Dacc.set_tail dst xs
+let remove_at j lst =
+  let a = A.of_list lst in
+  let n = A.length a in
+  assert(j >= 0 && j < n);
+  A.fold_righti (fun i x acc ->
+      if i <> j then
+        x :: acc
       else
-        loop (Dacc.accum dst x) (i - 1) xs
-  in
-  if i < 0 then
-    invalid_arg "MU.remove_at"
-  else
-    let dummy = Dacc.create () in
-    loop dummy i lst;
-    Dacc.return dummy
-
-(* create a list by calling f() until it throws an exception,
-   returns: (res, exn)
-   input order is preserved *)
-let unfold_exc f =
-  let rec loop dst =
-    loop (Dacc.accum dst (f()))
-  in
-  let acc = Dacc.create () in
-  try
-    loop acc
-  with exn -> (Dacc.return acc, exn)
+        acc
+    ) a []
 
 (* same as unfold_exc but input order is reversed *)
 let unfold_exc_rev f =

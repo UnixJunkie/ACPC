@@ -4,7 +4,7 @@
 open Batteries
 open Legacy.Printf
 
-module L     = List
+module L     = BatList
 module MU    = My_utils
 module S     = String
 module Scanf = Legacy.Scanf
@@ -67,7 +67,7 @@ let main () =
   let nb_molecules = ref 0 in
   let score_labels, exn =
     MU.with_in_file !input_fn (fun input ->
-      MU.unfold_exc
+      L.unfold_exc
         (fun () -> let l = Legacy.input_line input in
                    try sscanf nb_molecules l
                    with _ ->

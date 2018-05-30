@@ -11,7 +11,7 @@ library common
                 Autocorr, ROC, Consensus, Molecule, Query, Molecular_graph,
                 Chimera_colors
   src-dir:      common
-  BuildDepends: batteries, dolog, vector3, lacc, itv-tree, ocamlgraph
+  BuildDepends: batteries, dolog, vector3, itv-tree, ocamlgraph
 
 Executable acpc
   oflags:         -bin-annot -w +27 -warn-error +8 -g

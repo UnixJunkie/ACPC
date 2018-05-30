@@ -4,7 +4,7 @@ open Molecule
 
 module AC = Autocorr
 module HT = Hashtbl
-module L  = List
+module L  = BatList
 module MU = My_utils
 module S  = BatString
 
@@ -41,7 +41,7 @@ let query_w_indexed_molecule
   (* compute score-labels of all DB molecules against the query *)
   MU.with_in_file database_fn (fun input ->
     let score_labels, exn =
-      MU.unfold_exc
+      L.unfold_exc
         (fun () ->
            let i = !nb_molecules in
            let candidate = read_one_db_molecule nb_molecules input in
