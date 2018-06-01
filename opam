@@ -1,7 +1,6 @@
 opam-version: "1.2"
 name: "acpc"
-version: "1.1.1"
-maintainer: "francois.berenger@inria.fr"
+maintainer: "unixjunkie@sdf.org"
 authors: "Francois Berenger"
 homepage: "https://github.com/UnixJunkie/ACPC"
 bug-reports: "https://github.com/UnixJunkie/ACPC/issues"
