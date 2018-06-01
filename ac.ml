@@ -254,6 +254,8 @@ let main () =
       MU.with_out_file !dist_matrix_file
         (fun out ->
            if !maccs_file <> "" then
+             failwith "not implemented yet"
+               (*
              (* 0) write header line *)
              let tani, encoded_molecules =
                let maccs_fps = Maccs_reader.read_molecules !maccs_file in
@@ -282,6 +284,7 @@ let main () =
                done;
                fprintf out "\n";
              done
+*)
            else
              (* 0) write header line *)
              let tani, encoded_molecules = AC.tanimoto, db_kdes in
