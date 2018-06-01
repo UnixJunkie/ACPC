@@ -47,7 +47,6 @@ depends: [
   "dolog"
   "vector3"
   "parmap"
-  "lacc"
   "itv-tree"
   "ocamlgraph"
   "conf-gnuplot"
