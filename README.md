@@ -3,7 +3,7 @@ ACPC v1.0
 
 ![Logo](ACPC_logo.png?raw=true)
 
-Don't hesitate to contact Francois Berenger in case you have problems running
+Don't hesitate to contact the author in case you have problems running
 the software or discover a bug.
 
 Installation
