@@ -164,16 +164,6 @@ let rec fold_while f p acc l =
 let partition_while p l =
   (L.take_while p l, L.drop_while p l)
 
-(* let combine3 l m n = *)
-(*   let rec loop l1 l2 l3 acc = *)
-(*     match l1, l2, l3 with *)
-(*         [], [], [] -> L.rev acc *)
-(*       | x :: xs, y :: ys, z :: zs -> *)
-(*           loop xs ys zs ((x, y, z) :: acc) *)
-(*       | _ -> failwith "my_utils.ml: combine3: different list lengths" *)
-(*   in *)
-(*   loop l m n [] *)
-
 let enumerate l =
   let rec enumerate_priv l i acc =
     match l with
@@ -245,15 +235,6 @@ let combine lx ly =
       | _                -> raise Different_list_lengths
   in
   combine_priv lx ly []
-
-(* let combine3 lx ly lz = *)
-(*   let rec combine3_priv l1 l2 l3 acc = *)
-(*     match l1, l2, l3 with *)
-(*         x :: xs, y :: ys, z :: zs -> combine3_priv xs ys zs ((x,y,z) :: acc) *)
-(*       | []     , []     , []      -> L.rev acc *)
-(*       | _                         -> raise Different_list_lengths *)
-(*   in *)
-(*   combine3_priv lx ly lz [] *)
 
 exception List_length_not_multiple_of_three;;
 
