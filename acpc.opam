@@ -19,12 +19,13 @@ install: [
 ]
 remove: ["rm" "-f" "%{bin}%/acpc" "%{bin}%/acpc_big" "%{bin}%/acpc_mol2tool"]
 depends: [
-  "obuild" {build}
+  "ocaml" {>= "5.0.0"}
+  "dune"
   "base-unix"
   "batteries"
   "dolog"
   "vector3"
-  "parmap"
+  "parany"
   "conf-gnuplot"
   "conf-autoconf"
 ]
