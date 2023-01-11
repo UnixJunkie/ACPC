@@ -2,5 +2,6 @@
 (executables
   (names ac big_ac mol2_tool)
   (public_names acpc acpc_big acpc_mol2tool)
-  (modules ac big_ac mol2_tool)
+  (modules ac big_ac mol2_tool my_utils mol2_parser atom amino_acid autocorr
+           kde ROC dist_matrix)
   (libraries batteries dolog vector3 parmap bitv))
