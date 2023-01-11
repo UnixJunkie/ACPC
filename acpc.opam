@@ -1,31 +1,34 @@
-opam-version: "1.2"
+opam-version: "2.0"
 name: "acpc"
-maintainer: "unixjunkie@sdf.org"
 authors: "Francois Berenger"
+maintainer: "unixjunkie@sdf.org"
 homepage: "https://github.com/UnixJunkie/ACPC"
 bug-reports: "https://github.com/UnixJunkie/ACPC/issues"
-license: "BSD"
-dev-repo: "git://github.com/UnixJunkie/ACPC"
-build: [
-  ["obuild" "configure"]
-  ["obuild" "build"]
-]
-install: [
-  "cp"
-  "dist/build/acpc/acpc"
-  "dist/build/acpc_big/acpc_big"
-  "dist/build/acpc_mol2tool/acpc_mol2tool"
-  bin
-]
-remove: ["rm" "-f" "%{bin}%/acpc" "%{bin}%/acpc_big" "%{bin}%/acpc_mol2tool"]
+license: "BSD-3-Clause"
+dev-repo: "git+https://github.com/UnixJunkie/ACPC.git"
+build: ["dune" "build" "-p" name "-j" jobs]
 depends: [
-  "ocaml" {>= "5.0.0"}
-  "dune"
   "base-unix"
   "batteries"
-  "dolog"
-  "vector3"
-  "parany"
-  "conf-gnuplot"
+  "bitv"
   "conf-autoconf"
+  "conf-gnuplot"
+  "dolog"
+  "dune" {>= "1.11"}
+  "ocaml" {>= "5.0.0"}
+  "parany"
+  "vector3"
 ]
+synopsis: "Chemoinformatics tool for ligand-based virtual screening"
+description: """
+AutoCorrelation of Partial Charges (ACPC)
+
+Bibliography
+============
+
+Berenger, F., Voet, A., Lee, X. Y., & Zhang, K. Y. (2014).
+A Rotation-Translation Invariant Molecular Descriptor of Partial Charges
+and its Use in Ligand-Based Virtual Screening.
+Journal of Cheminformatics, 6(1), 1-12.
+https://doi.org/10.1186/1758-2946-6-23
+"""
