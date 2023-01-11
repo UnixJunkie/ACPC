@@ -7,11 +7,11 @@
    http://www.tripos.com/data/support/mol2.pdf *)
 
 open Batteries
-open Printf
 
 module A  = Array
 module At = Atom
 module L  = List
+module Log = Dolog.Log
 module F  = Filename
 module MU = My_utils
 

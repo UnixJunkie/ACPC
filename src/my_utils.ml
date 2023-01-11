@@ -1,12 +1,12 @@
 
 open Batteries
-open Printf
 
 module A   = Array
 module F   = File
 module FN  = Filename
 module HT  = Hashtbl
 module L   = List
+module Log = Dolog.Log
 module Mar = Marshal
 module P   = Printf
 module RNG = Random
@@ -122,15 +122,15 @@ let average_a a = (sum_a a) /. (float_of_int (A.length a))
 (* minimum of a float array *)
 let min_a a =
   A.fold_left
-    Pervasives.min      (* a fun   *)
-    Pervasives.infinity (* a value *)
+    Stdlib.min      (* a fun   *)
+    Stdlib.infinity (* a value *)
     a
 
 (* maximum of a float array *)
 let max_a a =
   A.fold_left
-    Pervasives.max          (* a fun   *)
-    Pervasives.neg_infinity (* a value *)
+    Stdlib.max          (* a fun   *)
+    Stdlib.neg_infinity (* a value *)
     a
 
 (* ============================== Lists ============================== *)
@@ -164,15 +164,15 @@ let rec fold_while f p acc l =
 let partition_while p l =
   (L.take_while p l, L.drop_while p l)
 
-let combine3 l m n =
-  let rec loop l1 l2 l3 acc =
-    match l1, l2, l3 with
-        [], [], [] -> L.rev acc
-      | x :: xs, y :: ys, z :: zs ->
-          loop xs ys zs ((x, y, z) :: acc)
-      | _ -> failwith "my_utils.ml: combine3: different list lengths"
-  in
-  loop l m n []
+(* let combine3 l m n = *)
+(*   let rec loop l1 l2 l3 acc = *)
+(*     match l1, l2, l3 with *)
+(*         [], [], [] -> L.rev acc *)
+(*       | x :: xs, y :: ys, z :: zs -> *)
+(*           loop xs ys zs ((x, y, z) :: acc) *)
+(*       | _ -> failwith "my_utils.ml: combine3: different list lengths" *)
+(*   in *)
+(*   loop l m n [] *)
 
 let enumerate l =
   let rec enumerate_priv l i acc =
@@ -246,14 +246,14 @@ let combine lx ly =
   in
   combine_priv lx ly []
 
-let combine3 lx ly lz =
-  let rec combine3_priv l1 l2 l3 acc =
-    match l1, l2, l3 with
-        x :: xs, y :: ys, z :: zs -> combine3_priv xs ys zs ((x,y,z) :: acc)
-      | []     , []     , []      -> L.rev acc
-      | _                         -> raise Different_list_lengths
-  in
-  combine3_priv lx ly lz []
+(* let combine3 lx ly lz = *)
+(*   let rec combine3_priv l1 l2 l3 acc = *)
+(*     match l1, l2, l3 with *)
+(*         x :: xs, y :: ys, z :: zs -> combine3_priv xs ys zs ((x,y,z) :: acc) *)
+(*       | []     , []     , []      -> L.rev acc *)
+(*       | _                         -> raise Different_list_lengths *)
+(*   in *)
+(*   combine3_priv lx ly lz [] *)
 
 exception List_length_not_multiple_of_three;;
 
@@ -497,7 +497,7 @@ let pearson_a a1 a2 =
 let spearman_rank arr =
   let arr = A.copy arr in
   let arr = A.mapi (fun i a -> a,i) arr in
-  A.fast_sort (fun (a,_) (b,_) -> Pervasives.compare a b) arr;
+  A.fast_sort (fun (a,_) (b,_) -> Stdlib.compare a b) arr;
   let g _prev il ans =
     let count = L.length il in
     let n = count + (L.length ans) in
@@ -517,7 +517,7 @@ let spearman_rank arr =
   in
   let prev,il,ans = A.fold_left f (0.0,[],[]) arr in
   let ans = g prev il ans in
-  let ans = L.fast_sort (fun (_,a) (_,b) -> Pervasives.compare a b) ans in
+  let ans = L.fast_sort (fun (_,a) (_,b) -> Stdlib.compare a b) ans in
   A.of_list (L.map fst ans)
 
 (* Spearman rank-order correlation coefficient *)

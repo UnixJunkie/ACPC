@@ -4,11 +4,12 @@
 open Batteries
 open Printf
 
-module F  = File
-module L  = List
-module HT = Hashtbl
-module MU = My_utils
-module S  = String
+module F   = File
+module L   = List
+module Log = Dolog.Log
+module HT  = Hashtbl
+module MU  = My_utils
+module S   = String
 
 (* group molecules by name and keep only the best score for each name
    THIS IS NEEDED BY MULTIPLE COMFORMERS DATASETS *)

@@ -14,6 +14,7 @@ open Printf
 module A    = Array
 module F    = Filename
 module L    = List
+module Log = Dolog.Log
 module MU   = My_utils
 module Mol2 = Mol2_parser
 module S    = String

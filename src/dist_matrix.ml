@@ -2,6 +2,7 @@
 
 module AC = Autocorr
 module HT = Hashtbl
+module Log = Dolog.Log
 
 type t = (int * int, float) HT.t
 

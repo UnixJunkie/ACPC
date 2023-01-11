@@ -10,7 +10,7 @@ module F    = File
 module Fn   = Filename
 module HT   = Hashtbl
 module L    = List
-module Log  = Log
+module Log  = Dolog.Log
 module MU   = My_utils
 module Mol2 = Mol2_parser
 module V3   = Vector3
@@ -83,7 +83,7 @@ let do_query
                Kde.linbin_autocorr debug_prefix_fn dx q
       in
       (unused_molecule_index, query_name, query_ac)
-    | queries ->
+    | _queries ->
       let _ = Log.fatal "more than one molecule in %s" query_file in
       exit 1
   in

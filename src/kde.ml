@@ -6,6 +6,7 @@ module AC = Autocorr
 module F  = File
 module HT = Hashtbl
 module L  = List
+module Log = Dolog.Log
 module MU = My_utils
 
 open Printf

@@ -8,7 +8,7 @@ module S    = String
 module F    = Filename
 module HT   = Hashtbl
 module L    = List
-module Log  = Log
+module Log  = Dolog.Log
 module MU   = My_utils
 module Mol2 = Mol2_parser
 module V3   = Vector3
@@ -16,11 +16,10 @@ module V3   = Vector3
 let do_query query_file db_file dx =
   let nb_molecules = ref 0 in
   let res = ref [] in
-  let (_query_name, _idx, query_molecule) as query =
-    match Mol2.read_molecules query_file with
-      | [m] -> m
-      | []  -> failwith ("no molecule in query file: " ^ query_file)
-      | _ -> failwith ("more than one molecule in query file: " ^ query_file)
+  let query = match Mol2.read_molecules query_file with
+    | [m] -> m
+    | []  -> failwith ("no molecule in query file: " ^ query_file)
+    | _ -> failwith ("more than one molecule in query file: " ^ query_file)
   in
   let query_basename = F.chop_extension query_file in
   let scores_fn = query_basename ^ ".scores" in

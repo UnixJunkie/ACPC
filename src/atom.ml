@@ -1,6 +1,5 @@
 
 open Batteries
-open Printf
 
 module AA = Amino_acid
 module L  = List
