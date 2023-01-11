@@ -17,11 +17,11 @@ module V3   = Vector3
 
 (* to factorize code *)
 let list_parmap ncores f l =
-  Parmap.parmap ~ncores f (Parmap.L l)
+  Parany.Parmap.parmap ncores f l
 
 (* to factorize code *)
 let list_pariter ncores f l =
-  Parmap.pariter ~ncores f (Parmap.L l)
+  Parany.Parmap.pariter ncores f l
 
 type comparison = CC | Tani | Tani2 | Tref | Tdb
 
